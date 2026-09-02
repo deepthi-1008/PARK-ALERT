@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>e-Challan Receipt #{{ violation['violation_id'] }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #fff; padding: 40px; }
+        .receipt { max-width: 600px; margin: 0 auto; border: 2px solid #2c3e50; padding: 30px; border-radius: 8px; }
+        .header { text-align: center; border-bottom: 2px solid #2c3e50; padding-bottom: 15px; margin-bottom: 20px; }
+        .header h2 { margin: 0; color: #2c3e50; }
+        .info-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 15px; }
+        .label { font-weight: bold; color: #555; }
+        .value { color: #000; }
+        .fine-box { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 15px; text-align: center; font-size: 20px; font-weight: bold; margin: 20px 0; border-radius: 4px; }
+        .evidence-img { width: 100%; border-radius: 4px; margin-top: 15px; border: 1px solid #ccc; }
+        .print-btn { display: block; width: 100%; padding: 10px; background: #2c3e50; color: #fff; border: none; font-size: 16px; border-radius: 4px; cursor: pointer; margin-top: 20px; }
+        @media print { .print-btn { display: none; } }
+    </style>
+</head>
+<body>
+
+    <div class="receipt">
+        <div class="header">
+            <h2>MUNICIPAL TRAFFIC ENFORCEMENT</h2>
+            <p>Official e-Challan Citation Receipt</p>
+        </div>
+
+        <div class="info-row">
+            <span class="label">Ticket Reference Number:</span>
+            <span class="value">#CHALLAN-2026-{{ violation['violation_id'] }}</span>
+        </div>
+        <div class="info-row">
+            <span class="label">Vehicle Registration Number:</span>
+            <span class="value"><strong>{{ violation['plate_number'] }}</strong></span>
+        </div>
+        <div class="info-row">
+            <span class="label">Registered Owner:</span>
+            <span class="value">{{ violation['owner_name'] or 'Guest Driver' }}</span>
+        </div>
+        <div class="info-row">
+            <span class="label">Contact Phone:</span>
+            <span class="value">{{ violation['phone_number'] }}</span>
+        </div>
+        <div class="info-row">
+            <span class="label">Overstay Dwell Duration:</span>
+            <span class="value">{{ violation['duration_sec'] }} seconds</span>
+        </div>
+        <div class="info-row">
+            <span class="label">Violation Timestamp:</span>
+            <span class="value">{{ violation['timestamp'] }}</span>
+        </div>
+
+        <div class="fine-box">
+            Total Penalty Fine: ₹{{ "%.2f"|format(violation['fine_amount']) }} ({{ violation['status'] }})
+        </div>
+
+        {% if violation['image_path'] %}
+        <div>
+            <span class="label">Violation Image Evidence:</span><br>
+            <img src="/{{ violation['image_path'] }}" class="evidence-img" alt="Violation Evidence Snapshot">
+        </div>
+        {% endif %}
+
+        <button class="print-btn" onclick="window.print()">Print Official e-Challan Receipt</button>
+    </div>
+
+</body>
+</html>

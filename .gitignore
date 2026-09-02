@@ -1,0 +1,11 @@
+# Ignore virtual environment
+venv/
+.venv/
+
+# Ignore Python cache & model weights
+__pycache__/
+*.pt
+
+# Ignore binary database files
+database/*.db
+database/*.db-journal
