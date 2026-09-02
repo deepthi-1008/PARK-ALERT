@@ -1,0 +1,21 @@
+{
+    "zone_name": "No-Parking Enforcement Zone 1",
+    "polygon_points": [
+        [
+            412,
+            108
+        ],
+        [
+            764,
+            64
+        ],
+        [
+            834,
+            446
+        ],
+        [
+            474,
+            466
+        ]
+    ]
+}
