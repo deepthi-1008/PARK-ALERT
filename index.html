@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PARK-ALERT | Automated No-Parking Zone Enforcement</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .navbar-brand {
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        .card {
+            border-radius: 12px;
+            border: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            margin-bottom: 24px;
+        }
+        .card-header {
+            background-color: #ffffff;
+            border-bottom: 1px solid #edf2f7;
+            font-weight: 600;
+            border-top-left-radius: 12px !important;
+            border-top-right-radius: 12px !important;
+            padding: 16px 20px;
+        }
+        .video-container {
+            position: relative;
+            background-color: #000;
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+        }
+        .video-stream {
+            width: 100%;
+            height: auto;
+            max-width: 1280px;
+            display: block;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+        }
+        .table-responsive {
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .table thead {
+            background-color: #f1f5f9;
+        }
+        .badge-unpaid {
+            background-color: #dc3545;
+        }
+        .badge-paid {
+            background-color: #198754;
+        }
+        .badge-pending {
+            background-color: #6c757d;
+        }
+        .badge-sent {
+            background-color: #0d6efd;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand" href="#"><i class="fa-solid fa-triangle-exclamation me-2"></i>PARK-ALERT</a>
+            <span class="navbar-text text-white">Automated No-Parking Zone Detection & Penalty System</span>
+        </div>
+    </nav>
+
+    <div class="container-fluid px-4">
+        <div class="row">
+            <!-- Left Side: Live Video Stream Feed -->
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span><i class="fa-solid fa-video me-2 text-primary"></i>Live Stream & ROI Enforcement</span>
+                        <span id="streamStatus" class="badge bg-success">Active Stream</span>
+                    </div>
+                    <div class="card-body p-2">
+                        <div class="video-container">
+                            <img id="videoFeed" class="video-stream" src="{{ url_for('video_feed') }}" alt="PARK-ALERT Video Stream" onerror="this.style.display='none'; document.getElementById('noFeedMsg').style.display='block'; document.getElementById('streamStatus').className='badge bg-secondary'; document.getElementById('streamStatus').innerText='Offline';">
+                            <div id="noFeedMsg" class="text-white text-center p-4" style="display: none;">
+                                <i class="fa-solid fa-file-video fa-3x mb-3 text-muted"></i>
+                                <p>No active video stream. Please upload a traffic video below to draw the No-Parking region.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side: Video Upload & Control Panel -->
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fa-solid fa-upload me-2 text-primary"></i>Select Traffic Video
+                    </div>
+                    <div class="card-body">
+                        <form action="{{ url_for('upload_video') }}" method="POST" enctype="multipart/form-data">
+                            <div class="mb-3">
+                                <label for="video_file" class="form-label">Upload Video Feed:</label>
+                                <input class="form-control" type="file" id="video_file" name="video_file" accept="video/*" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fa-solid fa-vector-square me-2"></i>Upload & Set Boundary Zone
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fa-solid fa-circle-info me-2 text-info"></i>Quick Instructions
+                    </div>
+                    <div class="card-body">
+                        <ol class="ps-3 mb-0">
+                            <li class="mb-2">Upload the traffic surveillance video file above.</li>
+                            <li class="mb-2">Click <strong>4 points</strong> on the pop-up window to define the No-Parking Region (ROI).</li>
+                            <li class="mb-2">Press key <strong>'s'</strong> to save boundary coordinates.</li>
+                            <li class="mb-0">System automatically dispatches warning email alerts at 20s and logs penalty fine e-challans at 30s.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Section: Detected Violations Log Table -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span><i class="fa-solid fa-table me-2 text-primary"></i>Detected No-Parking Violations Log</span>
+                        <button id="refreshBtn" class="btn btn-sm btn-outline-primary" onclick="fetchViolations()">
+                            <i class="fa-solid fa-rotate me-1"></i>Refresh Table
+                        </button>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Track ID</th>
+                                        <th>License Plate</th>
+                                        <th>Vehicle Type</th>
+                                        <th>Parked Time</th>
+                                        <th>Fine Amount</th>
+                                        <th>Payment Status</th>
+                                        <th>Email Alert</th>
+                                        <th>Timestamp</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="violationsTableBody">
+                                    <tr>
+                                        <td colspan="9" class="text-center py-4 text-muted">Loading violation records...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        function fetchViolations() {
+            fetch('/violations_data')
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.getElementById('violationsTableBody');
+                    if (!tbody) return;
+
+                    // Handle both direct array format [...] and object format { violations: [...] }
+                    const violations = Array.isArray(data) ? data : (data.violations || []);
+
+                    if (violations.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="9" class="text-center py-4 text-muted">No violations recorded.</td></tr>';
+                        return;
+                    }
+
+                    let rowsHtml = '';
+                    violations.forEach(v => {
+                        const plateNumber = v.plate_number || v.license_plate || v.plate || 'UNKNOWN';
+                        const parkedDuration = v.duration_sec ?? v.duration ?? v.parked_time ?? 0;
+                        const violationId = v.violation_id ?? v.id;
+
+                        const statusBadge = (v.status === 'PAID')
+                            ? '<span class="badge badge-paid">PAID</span>'
+                            : '<span class="badge badge-unpaid">UNPAID</span>';
+
+                        const isSent = (v.sms_status === 'sent' || v.sms_status === 'Sent');
+                        const emailBadge = isSent
+                            ? '<span class="badge badge-sent"><i class="fa-solid fa-envelope me-1"></i>Sent</span>'
+                            : '<span class="badge badge-pending"><i class="fa-solid fa-clock me-1"></i>Pending</span>';
+
+                        const challanBtn = violationId
+                            ? `<a href="/challan/${violationId}" target="_blank" class="btn btn-sm btn-outline-danger"><i class="fa-solid fa-file-invoice me-1"></i>Challan</a>`
+                            : '';
+
+                        const fineAmountFormatted = (typeof v.fine_amount === 'number')
+                            ? v.fine_amount.toFixed(2)
+                            : parseFloat(v.fine_amount || 0).toFixed(2);
+
+                        rowsHtml += `
+                            <tr>
+                                <td><strong>#${v.track_id}</strong></td>
+                                <td><span class="badge bg-dark fs-6">${plateNumber}</span></td>
+                                <td>${v.vehicle_type || 'Vehicle'}</td>
+                                <td>${parkedDuration}s</td>
+                                <td><strong class="text-danger">₹${fineAmountFormatted}</strong></td>
+                                <td>${statusBadge}</td>
+                                <td>${emailBadge}</td>
+                                <td>${v.timestamp || ''}</td>
+                                <td>${challanBtn}</td>
+                            </tr>
+                        `;
+                    });
+
+                    tbody.innerHTML = rowsHtml;
+                })
+                .catch(err => {
+                    console.error('Error loading violations:', err);
+                });
+        }
+
+        // Auto-refresh table every 2 seconds for real-time website updates
+        setInterval(fetchViolations, 2000);
+        fetchViolations();
+    </script>
+</body>
+</html>
