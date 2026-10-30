@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PARK-ALERT | Live Operator Terminal</title>
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Unified Sotheby's Luxury Design System -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+</head>
+<body>
+
+  <!-- Ambient Architectural Atmosphere -->
+  <div class="sothebys-atmosphere">
+    <div class="sothebys-atmosphere-glow-1"></div>
+    <div class="sothebys-atmosphere-glow-2"></div>
+    <div class="sothebys-atmosphere-grid"></div>
+  </div>
+
+  <!-- ======================================================================
+       SOTHEBY'S TOP NAVIGATION
+       ====================================================================== -->
+  <header class="sothebys-nav-header">
+    <div class="nav-inner-container">
+      <a href="/" class="sothebys-brand">
+        <div class="brand-emblem">
+          <i class="fa-solid fa-shield-halved"></i>
+        </div>
+        <div class="brand-wordmark-wrap">
+          <span class="brand-wordmark">PARK-ALERT</span>
+          <span class="brand-tagline">Operator Control Terminal</span>
+        </div>
+      </a>
+
+      <!-- Center Links -->
+      <nav>
+        <ul class="sothebys-nav-menu" id="navMenu">
+          <li><a href="/" class="nav-item-link"><i class="fa-solid fa-compass me-1"></i>OVERVIEW</a></li>
+          <li><a href="/terminal" class="nav-item-link active"><i class="fa-solid fa-video me-1"></i>LIVE MONITORING</a></li>
+          <li><a href="/unpaid" class="nav-item-link"><i class="fa-solid fa-circle-exclamation me-1"></i>UNPAID VIOLATIONS</a></li>
+          <li><a href="/paid" class="nav-item-link"><i class="fa-solid fa-circle-check me-1"></i>PAID VIOLATIONS</a></li>
+          <li><a href="/#about-us" class="nav-item-link"><i class="fa-solid fa-landmark me-1"></i>ABOUT US</a></li>
+        </ul>
+      </nav>
+
+      <!-- Right Action -->
+      <div class="sothebys-nav-actions">
+        <a href="/" class="btn-terminal-outline">
+          <i class="fa-solid fa-house"></i>
+          <span>HOME DASHBOARD</span>
+        </a>
+        <button class="mobile-nav-toggle" id="mobileNavToggle" aria-label="Toggle Navigation">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ======================================================================
+       OPERATOR TERMINAL CONTAINER
+       ====================================================================== -->
+  <main class="surveillance-section" style="padding-top: 2.5rem;">
+    
+    <div class="section-head-luxury" style="text-align: left; margin-bottom: 2rem; max-width: 100%;">
+      <div class="section-pretitle">EDGE HARDWARE SURVEILLANCE &bull; ZONE ROI RUNTIME</div>
+      <h1 class="section-headline" style="font-size: 2.2rem;">
+        Autonomous Operator Terminal
+      </h1>
+      <p class="section-description" style="max-width: 760px;">
+        Monitor the live MJPEG camera feed, define spatial polygon coordinates via dynamic ROI calibration, and review real-time statutory violations.
+      </p>
+    </div>
+
+    <!-- Live Stream & Upload Split Layout -->
+    <div class="surveillance-split-grid">
+      
+      <!-- Left: Active MJPEG Video Stream -->
+      <div class="video-stream-card">
+        <div class="stream-frame-header">
+          <div class="stream-meta-title">
+            <i class="fa-solid fa-satellite-dish text-gold"></i>
+            <span>Live Video Stream &amp; ROI Geofence</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <span class="status-pill status-pill-live">
+              <span class="status-dot-pulse"></span>
+              <span id="streamStatusBadge">STREAM ACTIVE</span>
+            </span>
+          </div>
+        </div>
+
+        <div class="stream-viewport-wrapper">
+          <img id="videoFeed" class="active-camera-feed" src="{{ url_for('video_feed') }}" alt="PARK-ALERT Video Stream" onerror="handleStreamError(this);">
+          <div id="noFeedMsg" class="no-feed-placeholder" style="display: none;">
+            <i class="fa-solid fa-video-slash fa-3x"></i>
+            <h4 style="font-family: var(--font-serif); color: var(--text-white); margin-bottom: 0.5rem;">No Active Video Stream</h4>
+            <p style="font-size: 0.85rem; max-width: 440px;">Please upload a traffic surveillance MP4 video using the panel on the right to launch the ROI calibration window.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Footage Upload Form & Quick Instructions -->
+      <div class="upload-controls-card">
+        
+        <div class="file-upload-box">
+          <div style="margin-bottom: 1.25rem;">
+            <h3 style="font-family: var(--font-serif); font-size: 1.15rem; color: var(--text-white); margin-bottom: 0.25rem;">
+              <i class="fa-solid fa-cloud-arrow-up text-gold me-2"></i>Select Traffic Video Feed
+            </h3>
+            <p style="font-size: 0.8rem; color: var(--text-secondary);">Upload footage to initialize spatial dwell tracking.</p>
+          </div>
+
+          <form action="{{ url_for('upload_video') }}" method="POST" enctype="multipart/form-data">
+            <div class="upload-form-group">
+              <label for="video_file" class="custom-file-label">Traffic Surveillance File (.mp4):</label>
+              <input type="file" id="video_file" name="video_file" accept="video/*" class="custom-file-input" required>
+            </div>
+            <button type="submit" class="btn-sothebys-gold" style="width: 100%;">
+              <i class="fa-solid fa-vector-square me-2"></i>Upload &amp; Set Boundary Zone
+            </button>
+          </form>
+        </div>
+
+        <div class="protocol-guide-card">
+          <div class="protocol-title">
+            <i class="fa-solid fa-circle-info"></i>
+            <span>Boundary Calibration Guide</span>
+          </div>
+          <ol class="protocol-steps-list">
+            <li>
+              <span class="protocol-step-num">01</span>
+              <div>Upload surveillance video using the form above.</div>
+            </li>
+            <li>
+              <span class="protocol-step-num">02</span>
+              <div>Click <strong>4 points</strong> on the calibration window to define the No-Parking Region (ROI).</div>
+            </li>
+            <li>
+              <span class="protocol-step-num">03</span>
+              <div>Press key <strong>'s'</strong> to store the coordinates into <code>zone_config.json</code>.</div>
+            </li>
+            <li>
+              <span class="protocol-step-num">04</span>
+              <div>Pre-warning emails dispatch at <strong>20s</strong>; legal e-Challans log at <strong>30s</strong>.</div>
+            </li>
+          </ol>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Live Detected Violations Table -->
+    <div class="sothebys-table-container">
+      <div class="table-toolbar">
+        <div class="toolbar-title-wrap">
+          <span class="toolbar-title">
+            <i class="fa-solid fa-table text-gold me-2"></i>Detected No-Parking Violations Log
+          </span>
+          <span class="toolbar-subtitle">Auto-refreshing via /violations_data &bull; Sub-Second Dwell Synchronization</span>
+        </div>
+        <div class="table-controls-wrap">
+          <button class="btn-sm-action btn-sothebys-outline" onclick="fetchViolations()">
+            <i class="fa-solid fa-rotate me-1"></i>Refresh Log
+          </button>
+        </div>
+      </div>
+
+      <div class="table-responsive-wrapper">
+        <table class="sothebys-table">
+          <thead>
+            <tr>
+              <th>Track ID</th>
+              <th>License Plate</th>
+              <th>Vehicle Type</th>
+              <th>Parked Time</th>
+              <th>Fine Amount</th>
+              <th>Payment Status</th>
+              <th>Email Alert</th>
+              <th>Timestamp</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="violationsTableBody">
+            <tr>
+              <td colspan="9" class="table-empty-message">
+                <i class="fa-solid fa-circle-notch fa-spin text-gold me-2"></i>Loading violation records...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ======================================================================
+       FOOTER
+       ====================================================================== -->
+  <footer class="sothebys-footer">
+    <div class="footer-container">
+      <div class="footer-bottom-bar" style="border-top: none; padding-top: 0;">
+        <div class="sothebys-brand">
+          <div class="brand-emblem" style="width: 28px; height: 28px; font-size: 0.85rem;">
+            <i class="fa-solid fa-shield-halved"></i>
+          </div>
+          <span class="brand-wordmark" style="font-size: 1.1rem;">PARK-ALERT</span>
+        </div>
+        <div>
+          &copy; 2026 PARK-ALERT Inc. Karnataka State Police Automated Traffic Enforcement.
+        </div>
+        <div style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--champagne-gold);">
+          ANPR VISION RUNTIME &bull; ZERO-TOUCH ENFORCEMENT
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ======================================================================
+       PAGE SCRIPTS
+       ====================================================================== -->
+  <script>
+    const mobileBtn = document.getElementById('mobileNavToggle');
+    const navMenu = document.getElementById('navMenu');
+    if (mobileBtn && navMenu) {
+      mobileBtn.addEventListener('click', () => {
+        navMenu.classList.toggle('open');
+      });
+    }
+
+    function handleStreamError(img) {
+      img.style.display = 'none';
+      const fallback = document.getElementById('noFeedMsg');
+      if (fallback) fallback.style.display = 'flex';
+      const badge = document.getElementById('streamStatusBadge');
+      if (badge) {
+        badge.innerText = 'OFFLINE';
+        badge.parentElement.classList.remove('status-pill-live');
+        badge.parentElement.classList.add('status-pill-warning');
+      }
+    }
+
+    function escapeHtml(str) {
+      return String(str ?? '')
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
+    function fetchViolations() {
+      fetch('/violations_data')
+        .then(response => response.json())
+        .then(data => {
+          const tbody = document.getElementById('violationsTableBody');
+          if (!tbody) return;
+
+          const violations = Array.isArray(data) ? data : (data.violations || []);
+
+          if (violations.length === 0) {
+            tbody.innerHTML = `
+              <tr>
+                <td colspan="9" class="table-empty-message">
+                  <i class="fa-solid fa-circle-check text-emerald me-2"></i>No violations recorded in current surveillance session.
+                </td>
+              </tr>
+            `;
+            return;
+          }
+
+          let rowsHtml = '';
+          violations.forEach(v => {
+            const plateNumber = escapeHtml(v.plate_number || v.license_plate || v.plate || 'UNKNOWN');
+            const parkedDuration = parseInt(v.duration_sec ?? v.duration ?? v.parked_time ?? 0, 10);
+            const violationId = v.violation_id ?? v.id;
+            const trackId = escapeHtml(v.track_id || '-');
+            const vehicleType = escapeHtml(v.vehicle_type || 'Vehicle');
+            const timestamp = escapeHtml(v.timestamp || '—');
+
+            const statusBadge = (v.status === 'PAID')
+              ? '<span class="status-pill status-pill-paid"><i class="fa-solid fa-circle-check me-1"></i>PAID</span>'
+              : '<span class="status-pill status-pill-unpaid"><i class="fa-solid fa-circle-exclamation me-1"></i>UNPAID</span>';
+
+            const isSent = (v.sms_status === 'sent' || v.sms_status === 'Sent');
+            const emailBadge = isSent
+              ? '<span class="status-pill status-pill-paid"><i class="fa-solid fa-envelope-circle-check me-1"></i>Email Sent</span>'
+              : '<span class="status-pill status-pill-warning"><i class="fa-solid fa-clock me-1"></i>Pending</span>';
+
+            const challanBtn = violationId
+              ? `<a href="/challan/${violationId}" target="_blank" class="btn-sm-action btn-challan-view">
+                   <i class="fa-solid fa-file-invoice me-1"></i>View Challan
+                 </a>`
+              : '—';
+
+            const fineAmountFormatted = (typeof v.fine_amount === 'number')
+              ? v.fine_amount.toFixed(2)
+              : parseFloat(v.fine_amount || 0).toFixed(2);
+
+            rowsHtml += `
+              <tr>
+                <td><strong style="color: var(--champagne-gold); font-family: var(--font-mono);">#${trackId}</strong></td>
+                <td><span class="sothebys-plate-badge"><span class="plate-country-code">IND</span>${plateNumber}</span></td>
+                <td>${vehicleType}</td>
+                <td><strong style="font-family: var(--font-mono);">${parkedDuration}s</strong></td>
+                <td><strong class="text-crimson" style="font-family: var(--font-mono);">₹${fineAmountFormatted}</strong></td>
+                <td>${statusBadge}</td>
+                <td>${emailBadge}</td>
+                <td style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-secondary);">${timestamp}</td>
+                <td>${challanBtn}</td>
+              </tr>
+            `;
+          });
+
+          tbody.innerHTML = rowsHtml;
+        })
+        .catch(err => {
+          console.warn('Error loading violations:', err);
+        });
+    }
+
+    // Auto-refresh table every 2 seconds
+    setInterval(fetchViolations, 2000);
+    fetchViolations();
+  </script>
+</body>
+</html>

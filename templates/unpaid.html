@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PARK-ALERT | Unpaid Violations Registry</title>
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Unified Sotheby's Luxury Design System -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+</head>
+<body>
+
+  <!-- Ambient Architectural Atmosphere -->
+  <div class="sothebys-atmosphere">
+    <div class="sothebys-atmosphere-glow-1"></div>
+    <div class="sothebys-atmosphere-glow-2"></div>
+    <div class="sothebys-atmosphere-grid"></div>
+  </div>
+
+  <!-- Top Operator Status Bar -->
+  <div style="background: #001A33; border-bottom: 1px solid var(--sothebys-border-gold); padding: 0.75rem 2rem; position: sticky; top: 0; z-index: 1000;">
+    <div style="max-width: 1400px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <div class="brand-emblem" style="width: 32px; height: 32px; font-size: 0.85rem;">
+          <i class="fa-solid fa-shield-halved"></i>
+        </div>
+        <div>
+          <span style="font-family: var(--font-serif); font-size: 1.1rem; font-weight: 700; color: #FFF;">PARK-ALERT Operator Terminal</span>
+          <span style="font-size: 0.7rem; color: var(--champagne-gold); margin-left: 0.5rem; text-transform: uppercase; letter-spacing: 0.1em;">&bull; UNPAID CITATION AUDIT</span>
+        </div>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 1.25rem;">
+        <div style="display: flex; align-items: center; gap: 0.65rem; background: rgba(11, 25, 44, 0.7); padding: 4px 12px; border-radius: 4px; border: 1px solid var(--sothebys-border);">
+          <span class="status-dot-pulse"></span>
+          <span id="topBarOfficerDisplay" style="font-size: 0.82rem; font-weight: 600; color: #FFF;">Officer on Duty</span>
+          <span style="color: var(--text-muted);">&bull;</span>
+          <span id="topBarAreaDisplay" style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--champagne-gold);">Sector 01</span>
+        </div>
+
+        <button type="button" class="btn-sm-action btn-sothebys-outline" onclick="openVehicleModal()">
+          <i class="fa-solid fa-car me-1 text-gold"></i>Register Vehicle
+        </button>
+
+        <a href="/" class="btn-sm-action btn-sothebys-outline" style="text-decoration: none;">
+          <i class="fa-solid fa-house me-1"></i>Home
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dashboard Layout Wrapper: Sidebar + Content -->
+  <div class="dashboard-layout-wrapper">
+    
+    <!-- LEFT-HAND SIDEBAR NAVIGATION -->
+    <aside class="sothebys-sidebar">
+      <div class="sidebar-brand-block">
+        <a href="/" class="sothebys-brand">
+          <div class="brand-emblem" style="width: 34px; height: 34px;">
+            <i class="fa-solid fa-shield-halved"></i>
+          </div>
+          <div class="brand-wordmark-wrap">
+            <span class="brand-wordmark" style="font-size: 1.2rem;">PARK-ALERT</span>
+            <span class="brand-tagline">Operator Console</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="sidebar-officer-badge">
+        <div class="officer-avatar">
+          <i class="fa-solid fa-user-shield"></i>
+        </div>
+        <div class="officer-info-wrap">
+          <span class="officer-name" id="sidebarOfficerName">Officer on Duty</span>
+          <span class="officer-area" id="sidebarOfficerArea">Sector 01</span>
+        </div>
+      </div>
+
+      <ul class="sidebar-nav-list">
+        <li>
+          <a href="/" class="sidebar-nav-link">
+            <i class="fa-solid fa-video text-gold"></i>
+            <span>Live Surveillance HUD</span>
+          </a>
+        </li>
+        <li>
+          <a href="/unpaid" class="sidebar-nav-link active">
+            <i class="fa-solid fa-circle-exclamation" style="color: var(--crimson);"></i>
+            <span>Unpaid Violations</span>
+          </a>
+        </li>
+        <li>
+          <a href="/paid" class="sidebar-nav-link">
+            <i class="fa-solid fa-circle-check" style="color: var(--emerald);"></i>
+            <span>Paid Violations</span>
+          </a>
+        </li>
+        <li>
+          <a class="sidebar-nav-link" onclick="openVehicleModal()">
+            <i class="fa-solid fa-id-card text-gold"></i>
+            <span>Register Vehicle Record</span>
+          </a>
+        </li>
+        <li>
+          <a href="/" class="sidebar-nav-link">
+            <i class="fa-solid fa-compass"></i>
+            <span>Public Overview</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer-block">
+        <button type="button" class="btn-sidebar-logout" onclick="logoutOfficer()">
+          <i class="fa-solid fa-arrow-right-from-bracket me-1"></i>Logout Operator
+        </button>
+      </div>
+    </aside>
+
+    <!-- MAIN UNPAID VIOLATIONS CONTENT -->
+    <main class="dashboard-content-main">
+      
+      <!-- Top Banner -->
+      <div class="operator-top-banner">
+        <div>
+          <span class="tracking-luxury text-gold" style="font-size: 0.72rem; font-weight: 700;">MVA SECTION 122 &amp; 177 ENFORCEMENT</span>
+          <h1 style="font-family: var(--font-serif); font-size: 1.6rem; color: #FFF; margin: 2px 0 0;">
+            Unpaid Violations Registry
+          </h1>
+        </div>
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <button class="btn-sm-action btn-sothebys-gold" onclick="openVehicleModal()">
+            <i class="fa-solid fa-plus me-1"></i>Map Vehicle Record
+          </button>
+        </div>
+      </div>
+
+      <!-- Alert Notification Banner -->
+      <div id="noticeBanner" style="display: none; padding: 1rem 1.4rem; border-radius: 6px; margin-bottom: 1.5rem; font-size: 0.88rem; font-family: var(--font-sans); align-items: center; justify-content: space-between;">
+        <span id="noticeMessage"></span>
+        <button onclick="document.getElementById('noticeBanner').style.display='none'" style="background: none; border: none; color: inherit; cursor: pointer; font-size: 1rem;">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Unpaid Table Container -->
+      <div class="sothebys-table-container">
+        <div class="table-toolbar">
+          <div class="toolbar-title-wrap">
+            <span class="toolbar-title">
+              <i class="fa-solid fa-circle-exclamation text-crimson me-2"></i>Pending Statutory e-Challans
+            </span>
+            <span class="toolbar-subtitle" id="lastUpdatedText">Connecting to Central Registry...</span>
+          </div>
+
+          <div class="table-controls-wrap">
+            <div class="search-input-wrap">
+              <i class="fa-solid fa-magnifying-glass search-input-icon"></i>
+              <input type="search" id="searchInput" class="sothebys-search-input" placeholder="Search plate or owner name..." oninput="renderTable()">
+            </div>
+            <button class="btn-sm-action btn-sothebys-outline" onclick="loadUnpaid(true)">
+              <i class="fa-solid fa-rotate me-1"></i>Refresh
+            </button>
+          </div>
+        </div>
+
+        <div class="table-responsive-wrapper">
+          <table class="sothebys-table">
+            <thead>
+              <tr>
+                <th>Plate Number</th>
+                <th>Owner Name</th>
+                <th>Contact Email</th>
+                <th>Detection Time</th>
+                <th>Fine Amount</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="unpaidBody">
+              <tr>
+                <td colspan="7" class="table-empty-message">
+                  <i class="fa-solid fa-circle-notch fa-spin text-gold me-2"></i>Loading unpaid violation citations...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- REGISTER VEHICLE RECORD MODAL -->
+  <div class="sothebys-modal-backdrop" id="vehicleModalBackdrop">
+    <div class="sothebys-modal-box modal-wide">
+      <div class="sothebys-modal-header">
+        <div>
+          <span class="tracking-luxury text-gold" style="font-size: 0.68rem; font-weight: 700;">CENTRAL DATABASE REGISTRY</span>
+          <h3 class="sothebys-modal-title">Manual Vehicle Registration &amp; Registry Review</h3>
+        </div>
+        <button type="button" class="sothebys-modal-close" onclick="closeVehicleModal()">&times;</button>
+      </div>
+
+      <div class="sothebys-modal-body">
+        <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 1.5rem;">
+          Map an Indian registration plate number directly to its Owner Name, Contact Email, and Phone Number in <code>database/no_parking.db</code>. When EasyOCR detects this vehicle, warning emails and e-Challans are automatically dispatched to this address.
+        </p>
+
+        <div id="vehicleModalAlert" style="display: none; padding: 0.75rem 1rem; border-radius: 4px; margin-bottom: 1.25rem; font-size: 0.85rem;"></div>
+
+        <form id="vehicleRegForm" onsubmit="handleVehicleRegSubmit(event)" style="background: rgba(4, 14, 28, 0.6); padding: 1.25rem; border: 1px solid var(--sothebys-border); border-radius: 6px; margin-bottom: 1.75rem;">
+          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+            <div class="sothebys-field-group" style="margin-bottom: 0;">
+              <label class="sothebys-field-label">License Plate Number *</label>
+              <input type="text" id="regPlate" class="sothebys-field-input" placeholder="e.g. KA 74 A 0929 or KA28W5310" required>
+            </div>
+            <div class="sothebys-field-group" style="margin-bottom: 0;">
+              <label class="sothebys-field-label">Registered Owner Full Name *</label>
+              <input type="text" id="regOwner" class="sothebys-field-input" placeholder="e.g. Anil Patel" required>
+            </div>
+            <div class="sothebys-field-group" style="margin-bottom: 0;">
+              <label class="sothebys-field-label">Contact Email (Notice Recipient) *</label>
+              <input type="email" id="regEmail" class="sothebys-field-input" placeholder="owner@example.com" required>
+            </div>
+            <div class="sothebys-field-group" style="margin-bottom: 0;">
+              <label class="sothebys-field-label">Contact Phone Number (Optional)</label>
+              <input type="tel" id="regPhone" class="sothebys-field-input" placeholder="+91 98765 43210">
+            </div>
+          </div>
+
+          <button type="submit" id="btnSaveVehicle" class="btn-sothebys-gold" style="margin-top: 1rem; width: 100%; justify-content: center;">
+            <i class="fa-solid fa-floppy-disk me-2"></i>Save Vehicle Record to Database
+          </button>
+        </form>
+
+        <div>
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+            <h4 style="font-family: var(--font-serif); font-size: 1.05rem; color: #FFF;">Registered Vehicles in Database</h4>
+            <input type="search" id="vehicleFilterInput" placeholder="Filter plate or owner..." oninput="filterVehiclesList()" class="sothebys-search-input" style="width: 220px; padding: 0.4rem 0.8rem; font-size: 0.78rem;">
+          </div>
+
+          <div style="max-height: 220px; overflow-y: auto; border: 1px solid var(--sothebys-border); border-radius: 4px;">
+            <table class="sothebys-table" style="font-size: 0.78rem;">
+              <thead>
+                <tr>
+                  <th style="padding: 0.6rem 0.8rem;">Plate</th>
+                  <th style="padding: 0.6rem 0.8rem;">Owner Name</th>
+                  <th style="padding: 0.6rem 0.8rem;">Email Address</th>
+                  <th style="padding: 0.6rem 0.8rem;">Phone</th>
+                </tr>
+              </thead>
+              <tbody id="registeredVehiclesBody">
+                <tr>
+                  <td colspan="4" class="table-empty-message" style="padding: 1.5rem;">
+                    <i class="fa-solid fa-circle-notch fa-spin text-gold me-2"></i>Querying registered vehicles...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    const UNPAID_ENDPOINT = '/api/unpaid_violations';
+    const REFRESH_MS = 3000;
+    const AUTH_KEY = 'parkAlertAuth_v2';
+
+    let allRows = [];
+    let lastSignature = null;
+    let inFlight = false;
+    const reminded = new Set();
+    const sending = new Set();
+
+    function initOfficerHeader() {
+      try {
+        const raw = localStorage.getItem(AUTH_KEY);
+        const auth = raw ? JSON.parse(raw) : null;
+        if (auth) {
+          const off = auth.officerName || 'Inspector Patil';
+          const area = auth.officerArea || 'Bagalkot Central';
+          document.getElementById('topBarOfficerDisplay').innerText = off;
+          document.getElementById('topBarAreaDisplay').innerText = area;
+          document.getElementById('sidebarOfficerName').innerText = off;
+          document.getElementById('sidebarOfficerArea').innerText = area;
+        }
+      } catch (e) {}
+    }
+
+    function logoutOfficer() {
+      localStorage.removeItem(AUTH_KEY);
+      window.location.href = '/';
+    }
+
+    function escapeHtml(val) {
+      return String(val ?? '')
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
+    function formatMoney(val) {
+      const num = parseFloat(val || 0);
+      return '₹' + (isNaN(num) ? '0.00' : num.toFixed(2));
+    }
+
+    function formatTimestamp(val) {
+      if (!val) return '—';
+      const d = new Date(String(val).replace(' ', 'T'));
+      if (isNaN(d.getTime())) return escapeHtml(val);
+      return d.toLocaleString('en-IN', {
+        day: '2-digit', month: 'short', year: 'numeric',
+        hour: '2-digit', minute: '2-digit', second: '2-digit'
+      });
+    }
+
+    function showNotice(msg, isSuccess) {
+      const box = document.getElementById('noticeBanner');
+      const text = document.getElementById('noticeMessage');
+      if (!box || !text) return;
+
+      box.style.display = 'flex';
+      text.innerText = msg;
+      if (isSuccess) {
+        box.style.background = 'rgba(16, 185, 129, 0.15)';
+        box.style.border = '1px solid #10B981';
+        box.style.color = '#34D399';
+      } else {
+        box.style.background = 'rgba(239, 68, 68, 0.15)';
+        box.style.border = '1px solid #EF4444';
+        box.style.color = '#F87171';
+      }
+
+      clearTimeout(showNotice.timer);
+      showNotice.timer = setTimeout(() => { box.style.display = 'none'; }, 6000);
+    }
+
+    function renderActions(row) {
+      const id = Number(row.violation_id);
+      const viewBtn = `
+        <a href="/challan/${id}" target="_blank" class="btn-sm-action btn-challan-view">
+          <i class="fa-solid fa-file-invoice me-1"></i>View Challan
+        </a>
+      `;
+
+      let reminderBtn = '';
+      if (reminded.has(id)) {
+        reminderBtn = `
+          <button class="btn-sm-action btn-receipt-action" disabled>
+            <i class="fa-solid fa-check me-1"></i>Reminder Sent
+          </button>
+        `;
+      } else if (sending.has(id)) {
+        reminderBtn = `
+          <button class="btn-sm-action btn-remind-action" disabled>
+            <i class="fa-solid fa-circle-notch fa-spin me-1"></i>Sending...
+          </button>
+        `;
+      } else {
+        reminderBtn = `
+          <button class="btn-sm-action btn-remind-action" onclick="sendReminder(${id}, this)">
+            <i class="fa-solid fa-envelope me-1"></i>Send Reminder
+          </button>
+        `;
+      }
+
+      return `
+        <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: nowrap;">
+          ${viewBtn}
+          ${reminderBtn}
+        </div>
+      `;
+    }
+
+    function renderTable() {
+      const tbody = document.getElementById('unpaidBody');
+      const query = (document.getElementById('searchInput').value || '').trim().toLowerCase();
+
+      if (!allRows || allRows.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" class="table-empty-message">
+              <i class="fa-solid fa-circle-check text-emerald me-2"></i>No unpaid violations on record. Central registry is clear.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      const filtered = allRows.filter(r => {
+        if (!query) return true;
+        const plate = String(r.plate_number || '').toLowerCase();
+        const owner = String(r.owner_name || '').toLowerCase();
+        return plate.includes(query) || owner.includes(query);
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" class="table-empty-message">
+              <i class="fa-solid fa-magnifying-glass me-2"></i>No unpaid records match your search query.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(row => {
+        const plate = escapeHtml(row.plate_number || 'UNKNOWN');
+        const owner = escapeHtml(row.owner_name || 'Vehicle Owner');
+        const email = row.email ? escapeHtml(row.email) : '<span style="color: var(--text-muted); font-size: 0.78rem;">No email on record</span>';
+        const detectTime = formatTimestamp(row.detection_time);
+        const fine = formatMoney(row.fine_amount);
+
+        return `
+          <tr>
+            <td>
+              <span class="sothebys-plate-badge">
+                <span class="plate-country-code">IND</span>${plate}
+              </span>
+            </td>
+            <td><strong>${owner}</strong></td>
+            <td>${email}</td>
+            <td style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-secondary);">${detectTime}</td>
+            <td><strong class="text-crimson" style="font-family: var(--font-mono); font-size: 0.92rem;">${fine}</strong></td>
+            <td>
+              <span class="status-pill status-pill-unpaid">
+                <i class="fa-solid fa-circle-exclamation me-1"></i>UNPAID
+              </span>
+            </td>
+            <td>${renderActions(row)}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    async function sendReminder(violationId, buttonEl) {
+      if (sending.has(violationId) || reminded.has(violationId)) return;
+      sending.add(violationId);
+      renderTable();
+
+      try {
+        const res = await fetch(`/api/send_reminder/${encodeURIComponent(violationId)}`, {
+          method: 'POST',
+          cache: 'no-store',
+          headers: { 'Accept': 'application/json' }
+        });
+        const data = await res.json().catch(() => ({}));
+
+        if (res.ok && data.status === 'success') {
+          reminded.add(violationId);
+          showNotice(`Statutory reminder email with 5-day settlement deadline dispatched for Challan #${violationId}.`, true);
+        } else {
+          showNotice(data.message || 'The reminder email could not be dispatched.', false);
+        }
+      } catch (err) {
+        showNotice('Failed to connect to server.', false);
+      } finally {
+        sending.delete(violationId);
+        renderTable();
+      }
+    }
+
+    async function loadUnpaid(force) {
+      if (inFlight) return;
+      inFlight = true;
+
+      try {
+        const res = await fetch(UNPAID_ENDPOINT, { cache: 'no-store' });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        const rows = Array.isArray(data) ? data : (data.violations || []);
+
+        const signature = JSON.stringify(rows);
+        if (force || signature !== lastSignature) {
+          lastSignature = signature;
+          allRows = rows;
+          renderTable();
+        }
+
+        const timeStr = new Date().toLocaleTimeString('en-IN');
+        const updateEl = document.getElementById('lastUpdatedText');
+        if (updateEl) updateEl.innerText = `Registry Synced &bull; Updated ${timeStr}`;
+      } catch (err) {
+        console.warn('Error reading unpaid registry:', err);
+      } finally {
+        inFlight = false;
+      }
+    }
+
+    /* Modal logic */
+    function openVehicleModal() {
+      document.getElementById('vehicleModalBackdrop').classList.add('open');
+      loadRegisteredVehicles();
+    }
+    function closeVehicleModal() {
+      document.getElementById('vehicleModalBackdrop').classList.remove('open');
+    }
+
+    window.addEventListener('click', (e) => {
+      if (e.target.classList.contains('sothebys-modal-backdrop')) {
+        e.target.classList.remove('open');
+      }
+    });
+
+    let cachedVehicles = [];
+    async function loadRegisteredVehicles() {
+      const tbody = document.getElementById('registeredVehiclesBody');
+      if (!tbody) return;
+      try {
+        const res = await fetch('/api/vehicles');
+        if (res.ok) {
+          const data = await res.json();
+          cachedVehicles = data.vehicles || [];
+          renderVehiclesList(cachedVehicles);
+        }
+      } catch (err) {}
+    }
+
+    function renderVehiclesList(list) {
+      const tbody = document.getElementById('registeredVehiclesBody');
+      if (!tbody) return;
+      if (!list || list.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" class="table-empty-message" style="padding: 1.25rem;">No vehicles registered yet.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = list.map(v => `
+        <tr>
+          <td style="padding: 0.6rem 0.8rem;"><span class="sothebys-plate-badge" style="font-size: 0.78rem; padding: 2px 6px;">${v.plate_number}</span></td>
+          <td style="padding: 0.6rem 0.8rem; font-weight: 600;">${v.owner_name}</td>
+          <td style="padding: 0.6rem 0.8rem; color: var(--text-secondary);">${v.email}</td>
+          <td style="padding: 0.6rem 0.8rem; font-family: var(--font-mono); color: var(--champagne-gold);">${v.phone_number || '—'}</td>
+        </tr>
+      `).join('');
+    }
+
+    function filterVehiclesList() {
+      const query = (document.getElementById('vehicleFilterInput').value || '').trim().toUpperCase();
+      const filtered = cachedVehicles.filter(v => 
+        String(v.plate_number).toUpperCase().includes(query) || 
+        String(v.owner_name).toUpperCase().includes(query)
+      );
+      renderVehiclesList(filtered);
+    }
+
+    async function handleVehicleRegSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnSaveVehicle');
+      const alertBox = document.getElementById('vehicleModalAlert');
+      const plate = document.getElementById('regPlate').value;
+      const owner = document.getElementById('regOwner').value;
+      const email = document.getElementById('regEmail').value;
+      const phone = document.getElementById('regPhone').value;
+
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin me-2"></i>Saving...';
+
+      try {
+        const res = await fetch('/api/register_vehicle', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ plate_number: plate, owner_name: owner, email: email, phone_number: phone })
+        });
+        const data = await res.json();
+        alertBox.style.display = 'block';
+        if (res.ok && data.status === 'success') {
+          alertBox.style.background = 'rgba(16, 185, 129, 0.15)';
+          alertBox.style.border = '1px solid #10B981';
+          alertBox.style.color = '#34D399';
+          alertBox.innerText = data.message;
+          document.getElementById('vehicleRegForm').reset();
+          loadRegisteredVehicles();
+        } else {
+          alertBox.style.background = 'rgba(239, 68, 68, 0.15)';
+          alertBox.style.border = '1px solid #EF4444';
+          alertBox.style.color = '#F87171';
+          alertBox.innerText = data.message || 'Error registering vehicle.';
+        }
+      } catch (err) {
+        alertBox.style.display = 'block';
+        alertBox.style.background = 'rgba(239, 68, 68, 0.15)';
+        alertBox.style.border = '1px solid #EF4444';
+        alertBox.style.color = '#F87171';
+        alertBox.innerText = 'Failed to connect to database.';
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-floppy-disk me-2"></i>Save Vehicle Record to Database';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initOfficerHeader();
+      loadUnpaid(true);
+      setInterval(() => loadUnpaid(false), REFRESH_MS);
+    });
+  </script>
+</body>
+</html>

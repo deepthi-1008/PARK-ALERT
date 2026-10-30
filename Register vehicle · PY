@@ -1,0 +1,123 @@
+#!/usr/bin/env python3
+"""
+register_vehicle.py
+-------------------
+Insert or update a registered vehicle in database/no_parking.db (table `vehicles`).
+
+Examples:
+    python register_vehicle.py --plate KA28W5310 --owner "Anil Patel" --email owner@example.com
+    python register_vehicle.py --plate "KA 28 W 5310" --owner "Anil Patel" --email owner@example.com --phone +919876543210
+
+Behaviour:
+  * The plate is normalised (uppercase, spaces/dashes removed) before use.
+  * It must match the Indian plate shape: 2 letters, 1-2 digits, 1-2 letters,
+    4 digits -- so both 9-char (e.g. KA28W5310) and 10-char (e.g. KA37EC2109)
+    plates are accepted.
+  * If a row already exists for the same normalised plate (even if it was
+    stored with spaces), that row is UPDATED instead of duplicated.
+  * The vehicles table is created with the same schema as database/database.py
+    if it does not already exist.
+
+Owner name and email are required on purpose: no defaults are invented, so a
+registration can never send a notice to an address you did not provide.
+"""
+
+from __future__ import annotations
+
+import argparse
+import os
+import re
+import sqlite3
+import sys
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(BASE_DIR, "database", "no_parking.db")
+
+PLATE_SHAPE_RE = re.compile(r"^[A-Z]{2}[0-9]{1,2}[A-Z]{1,2}[0-9]{4}$")
+EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
+
+VEHICLES_SCHEMA = """
+CREATE TABLE IF NOT EXISTS vehicles (
+    vehicle_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    plate_number TEXT UNIQUE NOT NULL,
+    owner_name TEXT NOT NULL,
+    phone_number TEXT,
+    email TEXT NOT NULL
+);
+"""
+
+
+def clean_plate(raw: str) -> str:
+    return re.sub(r"[^A-Z0-9]", "", raw.upper())
+
+
+def register(plate_raw: str, owner: str, email: str, phone: str, db_path: str = DB_PATH) -> int:
+    """Insert or update one vehicle. Returns the vehicle_id. Raises ValueError
+    for invalid input and sqlite3.Error for database problems."""
+    plate = clean_plate(plate_raw)
+    if not PLATE_SHAPE_RE.match(plate):
+        raise ValueError(
+            f"'{plate_raw}' is not a valid Indian plate shape after cleaning ('{plate}'). "
+            "Expected 2 letters, 1-2 digits, 1-2 letters, 4 digits (e.g. KA28W5310 or KA37EC2109)."
+        )
+    owner = owner.strip()
+    email = email.strip()
+    if not owner:
+        raise ValueError("Owner name must not be empty.")
+    if not EMAIL_RE.match(email):
+        raise ValueError(f"'{email}' does not look like a valid email address.")
+
+    os.makedirs(os.path.dirname(db_path), exist_ok=True)
+    with sqlite3.connect(db_path, timeout=30.0) as conn:
+        conn.execute(VEHICLES_SCHEMA)
+
+        # Find an existing row for this plate, ignoring any spaces/dashes it was stored with.
+        existing = None
+        for row_id, stored in conn.execute("SELECT vehicle_id, plate_number FROM vehicles"):
+            if clean_plate(str(stored)) == plate:
+                existing = row_id
+                break
+
+        if existing is not None:
+            conn.execute(
+                "UPDATE vehicles SET plate_number = ?, owner_name = ?, phone_number = ?, email = ? "
+                "WHERE vehicle_id = ?",
+                (plate, owner, phone, email, existing),
+            )
+            vehicle_id = existing
+            action = "updated"
+        else:
+            cur = conn.execute(
+                "INSERT INTO vehicles (plate_number, owner_name, phone_number, email) VALUES (?, ?, ?, ?)",
+                (plate, owner, phone, email),
+            )
+            vehicle_id = cur.lastrowid
+            action = "inserted"
+        conn.commit()
+
+    print(f"[OK] {action} vehicle_id={vehicle_id} plate={plate} owner={owner} email={email}")
+    return vehicle_id
+
+
+def main(argv=None) -> int:
+    parser = argparse.ArgumentParser(description="Register or update a vehicle in no_parking.db.")
+    parser.add_argument("--plate", required=True, help="Registration number, e.g. KA28W5310 (spaces/dashes are ignored).")
+    parser.add_argument("--owner", required=True, help="Owner's full name.")
+    parser.add_argument("--email", required=True, help="Owner's email address for warning notices.")
+    parser.add_argument("--phone", default="", help="Owner's phone number (optional).")
+    parser.add_argument("--db", default=DB_PATH, help=f"Path to the SQLite database (default: {DB_PATH}).")
+    args = parser.parse_args(argv)
+
+    try:
+        register(args.plate, args.owner, args.email, args.phone, db_path=args.db)
+    except ValueError as exc:
+        print(f"[ERROR] {exc}", file=sys.stderr)
+        return 2
+    except sqlite3.Error as exc:
+        print(f"[ERROR] database error: {exc}", file=sys.stderr)
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

@@ -1,0 +1,2082 @@
+/* ==========================================================================
+   PARK-ALERT — SOTHEBY'S INTERNATIONAL REALTY LUXURY DESIGN SYSTEM
+   Theme: Sotheby's Luxury Minimalism
+   Palette: #002244 Midnight Navy, #001A33 Deep Navy, #0B192C Panel Slate,
+            #C5A880 Champagne Gold, #FFFFFF Crisp Architectural White,
+            #1B365D Hairline Navy Rule, #94A3B8 Muted Slate
+   Typography: High-Contrast Serif Display & Clean Tracked Geometric Sans
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap');
+
+:root {
+  /* Core Sotheby's Palette */
+  --sothebys-navy: #002244;
+  --sothebys-navy-deep: #001A33;
+  --sothebys-navy-dark: #001020;
+  --sothebys-canvas: #040E1C;
+  --sothebys-panel: #0B192C;
+  --sothebys-panel-hover: #0E223D;
+  --sothebys-border: #1B365D;
+  --sothebys-border-light: rgba(197, 168, 128, 0.22);
+  --sothebys-border-gold: rgba(197, 168, 128, 0.45);
+
+  /* Gold Accents */
+  --champagne-gold: #C5A880;
+  --champagne-gold-light: #E2D1B8;
+  --champagne-gold-dark: #9E8158;
+  --champagne-glow: rgba(197, 168, 128, 0.25);
+  --champagne-shimmer: linear-gradient(135deg, #DFCA9B 0%, #C5A880 50%, #9E8158 100%);
+
+  /* Neutrals & Text */
+  --text-white: #FFFFFF;
+  --text-primary: #F8FAFC;
+  --text-secondary: #94A3B8;
+  --text-muted: #64748B;
+  --text-gold: #C5A880;
+
+  /* Status Accents */
+  --emerald: #10B981;
+  --emerald-glow: rgba(16, 185, 129, 0.25);
+  --amber: #F59E0B;
+  --amber-glow: rgba(245, 158, 11, 0.28);
+  --crimson: #EF4444;
+  --crimson-glow: rgba(239, 68, 68, 0.32);
+
+  /* Typography Families */
+  --font-serif: 'Playfair Display', 'Cormorant Garamond', Georgia, serif;
+  --font-display: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Elevations & Shadows */
+  --shadow-subtle: 0 4px 20px rgba(0, 0, 0, 0.35);
+  --shadow-elevated: 0 12px 36px rgba(0, 0, 0, 0.55), 0 0 1px rgba(27, 54, 93, 0.8);
+  --shadow-gold: 0 8px 30px rgba(197, 168, 128, 0.15);
+  --transition-smooth: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ==========================================================================
+   RESET & FOUNDATIONAL STYLES
+   ========================================================================== */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+  background-color: var(--sothebys-canvas);
+}
+
+body {
+  background-color: var(--sothebys-canvas);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-weight: 400;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* Ambient Subtle Architectural Atmosphere */
+.sothebys-atmosphere {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.sothebys-atmosphere-glow-1 {
+  position: absolute;
+  top: -150px;
+  right: -100px;
+  width: 700px;
+  height: 700px;
+  background: radial-gradient(circle, rgba(0, 34, 68, 0.8) 0%, rgba(197, 168, 128, 0.04) 50%, transparent 75%);
+  filter: blur(80px);
+}
+
+.sothebys-atmosphere-glow-2 {
+  position: absolute;
+  top: 40%;
+  left: -200px;
+  width: 800px;
+  height: 800px;
+  background: radial-gradient(circle, rgba(27, 54, 93, 0.45) 0%, rgba(0, 34, 68, 0.2) 50%, transparent 75%);
+  filter: blur(100px);
+}
+
+.sothebys-atmosphere-grid {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(to right, rgba(27, 54, 93, 0.15) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(27, 54, 93, 0.15) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(circle at 50% 30%, rgba(0, 0, 0, 0.6) 0%, transparent 80%);
+  -webkit-mask-image: radial-gradient(circle at 50% 30%, rgba(0, 0, 0, 0.6) 0%, transparent 80%);
+}
+
+/* Typography Utility Classes */
+.font-serif { font-family: var(--font-serif); }
+.font-sans { font-family: var(--font-sans); }
+.font-mono { font-family: var(--font-mono); }
+
+.tracking-luxury { letter-spacing: 0.18em; text-transform: uppercase; }
+.tracking-tight { letter-spacing: -0.02em; }
+.text-gold { color: var(--champagne-gold) !important; }
+.text-white { color: var(--text-white) !important; }
+.text-muted { color: var(--text-secondary) !important; }
+.text-crimson { color: var(--crimson) !important; }
+.text-emerald { color: var(--emerald) !important; }
+.text-amber { color: var(--amber) !important; }
+
+/* ==========================================================================
+   NAVIGATION BAR (SOTHEBY'S LUXURY MINIMALISM)
+   ========================================================================== */
+.sothebys-nav-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: rgba(0, 34, 68, 0.94);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--sothebys-border);
+  transition: var(--transition-smooth);
+}
+
+.sothebys-nav-header.scrolled {
+  background: rgba(0, 26, 51, 0.98);
+  border-bottom: 1px solid var(--sothebys-border-gold);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.nav-inner-container {
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 0.9rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+/* Brand Wordmark & Gold Emblem */
+.sothebys-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  text-decoration: none;
+  color: var(--text-white);
+  transition: var(--transition-smooth);
+}
+
+.brand-emblem {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: linear-gradient(145deg, #0B192C, #001A33);
+  border: 1px solid var(--champagne-gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--champagne-gold);
+  font-size: 1.15rem;
+  box-shadow: 0 0 12px var(--champagne-glow);
+  transition: var(--transition-smooth);
+}
+
+.sothebys-brand:hover .brand-emblem {
+  transform: translateY(-1px);
+  box-shadow: 0 0 18px rgba(197, 168, 128, 0.5);
+  border-color: var(--champagne-gold-light);
+}
+
+.brand-wordmark-wrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-wordmark {
+  font-family: var(--font-serif);
+  font-size: 1.45rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--text-white);
+  line-height: 1.1;
+}
+
+.brand-tagline {
+  font-family: var(--font-sans);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--champagne-gold);
+  margin-top: 2px;
+}
+
+/* Center Navigation Links */
+.sothebys-nav-menu {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  list-style: none;
+}
+
+.nav-item-link {
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  text-decoration: none;
+  padding: 0.5rem 0;
+  position: relative;
+  transition: var(--transition-smooth);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.nav-item-link:hover {
+  color: var(--champagne-gold-light);
+}
+
+.nav-item-link.active {
+  color: var(--champagne-gold);
+}
+
+.nav-item-link.active::after,
+.nav-item-link:hover::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--champagne-shimmer);
+  box-shadow: 0 0 8px var(--champagne-glow);
+  border-radius: 2px;
+}
+
+/* Right Nav Action: Access Terminal Outline Button */
+.sothebys-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.btn-terminal-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.6rem 1.3rem;
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--champagne-gold);
+  background: transparent;
+  border: 1px solid var(--champagne-gold);
+  border-radius: 4px;
+  text-decoration: none;
+  transition: var(--transition-smooth);
+}
+
+.btn-terminal-outline:hover {
+  background: var(--champagne-gold);
+  color: var(--sothebys-navy-deep);
+  box-shadow: 0 0 16px var(--champagne-glow);
+  transform: translateY(-1px);
+}
+
+/* Mobile Toggle */
+.mobile-nav-toggle {
+  display: none;
+  background: transparent;
+  border: 1px solid var(--sothebys-border);
+  color: var(--text-white);
+  font-size: 1.25rem;
+  padding: 0.4rem 0.7rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* ==========================================================================
+   BUTTONS & BADGES
+   ========================================================================== */
+.btn-sothebys-gold {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  background: linear-gradient(135deg, #DFCA9B 0%, #C5A880 100%);
+  color: #001A33;
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.85rem 1.8rem;
+  border-radius: 4px;
+  border: 1px solid #DFCA9B;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(197, 168, 128, 0.25);
+  transition: var(--transition-smooth);
+}
+
+.btn-sothebys-gold:hover {
+  background: linear-gradient(135deg, #FFF 0%, #C5A880 100%);
+  color: #001020;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(197, 168, 128, 0.4);
+}
+
+.btn-sothebys-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  background: rgba(11, 25, 44, 0.6);
+  color: var(--text-white);
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.85rem 1.8rem;
+  border-radius: 4px;
+  border: 1px solid var(--sothebys-border);
+  text-decoration: none;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition: var(--transition-smooth);
+}
+
+.btn-sothebys-outline:hover {
+  background: rgba(27, 54, 93, 0.5);
+  border-color: var(--champagne-gold);
+  color: var(--champagne-gold-light);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
+}
+
+.btn-sm-action {
+  padding: 0.45rem 0.9rem;
+  font-size: 0.74rem;
+  letter-spacing: 0.08em;
+  border-radius: 4px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition: var(--transition-smooth);
+}
+
+.btn-challan-view {
+  background: rgba(0, 34, 68, 0.7);
+  color: var(--champagne-gold-light);
+  border: 1px solid var(--champagne-gold);
+}
+.btn-challan-view:hover {
+  background: var(--champagne-gold);
+  color: var(--sothebys-navy-deep);
+  box-shadow: 0 0 12px var(--champagne-glow);
+}
+
+.btn-remind-action {
+  background: rgba(245, 158, 11, 0.15);
+  color: #FCD34D;
+  border: 1px solid rgba(245, 158, 11, 0.5);
+}
+.btn-remind-action:hover:not(:disabled) {
+  background: #F59E0B;
+  color: #000;
+  border-color: #F59E0B;
+}
+
+.btn-receipt-action {
+  background: rgba(16, 185, 129, 0.15);
+  color: #6EE7B7;
+  border: 1px solid rgba(16, 185, 129, 0.5);
+}
+.btn-receipt-action:hover:not(:disabled) {
+  background: #10B981;
+  color: #000;
+  border-color: #10B981;
+}
+
+/* Status Chips & Badges */
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.status-pill-paid {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34D399;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+}
+
+.status-pill-unpaid {
+  background: rgba(239, 68, 68, 0.16);
+  color: #F87171;
+  border: 1px solid rgba(239, 68, 68, 0.45);
+}
+
+.status-pill-warning {
+  background: rgba(245, 158, 11, 0.16);
+  color: #FBBF24;
+  border: 1px solid rgba(245, 158, 11, 0.45);
+}
+
+.status-pill-live {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10B981;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+}
+
+.status-dot-pulse {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: var(--emerald);
+  box-shadow: 0 0 8px var(--emerald);
+  animation: pulse-dot 1.8s infinite;
+}
+
+@keyframes pulse-dot {
+  0% { transform: scale(0.9); opacity: 0.7; }
+  50% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 12px var(--emerald); }
+  100% { transform: scale(0.9); opacity: 0.7; }
+}
+
+/* Monospace Plate Badge */
+.sothebys-plate-badge {
+  display: inline-flex;
+  align-items: center;
+  background: #020C17;
+  color: #FFFFFF;
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 0.3rem 0.75rem;
+  border-radius: 4px;
+  border: 1px solid var(--champagne-gold);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.sothebys-plate-badge .plate-country-code {
+  color: #60A5FA;
+  font-size: 0.7rem;
+  margin-right: 0.4rem;
+  padding-right: 0.4rem;
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* ==========================================================================
+   CARDS & PANELS
+   ========================================================================== */
+.sothebys-card {
+  background: var(--sothebys-panel);
+  border: 1px solid var(--sothebys-border);
+  border-radius: 6px;
+  box-shadow: var(--shadow-subtle);
+  overflow: hidden;
+  transition: var(--transition-smooth);
+}
+
+.sothebys-card:hover {
+  border-color: var(--sothebys-border-gold);
+  box-shadow: var(--shadow-elevated);
+}
+
+.sothebys-card-header {
+  padding: 1.1rem 1.6rem;
+  background: linear-gradient(180deg, rgba(0, 34, 68, 0.5) 0%, rgba(11, 25, 44, 0.3) 100%);
+  border-bottom: 1px solid var(--sothebys-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.sothebys-card-title {
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--text-white);
+  letter-spacing: 0.04em;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.sothebys-card-title i {
+  color: var(--champagne-gold);
+  font-size: 1rem;
+}
+
+.sothebys-card-body {
+  padding: 1.6rem;
+}
+
+/* ==========================================================================
+   HERO SECTION (SPLIT 2-COLUMN VIEW)
+   ========================================================================== */
+.hero-wrapper {
+  position: relative;
+  z-index: 1;
+  padding: 4.5rem 2rem 3.5rem;
+  max-width: 1360px;
+  margin: 0 auto;
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  gap: 3.5rem;
+  align-items: center;
+}
+
+/* Hero Left Column */
+.hero-left {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.category-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--champagne-gold);
+  background: rgba(197, 168, 128, 0.08);
+  border: 1px solid var(--sothebys-border-gold);
+  padding: 0.45rem 1rem;
+  border-radius: 4px;
+  width: fit-content;
+}
+
+.category-tag i {
+  font-size: 0.75rem;
+}
+
+.hero-title {
+  font-family: var(--font-serif);
+  font-size: 3.1rem;
+  line-height: 1.15;
+  font-weight: 700;
+  color: var(--text-white);
+  letter-spacing: -0.01em;
+}
+
+.hero-title-italic-gold {
+  display: block;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 600;
+  color: var(--champagne-gold);
+  text-shadow: 0 0 24px rgba(197, 168, 128, 0.25);
+  margin-top: 0.25rem;
+}
+
+.hero-subtitle {
+  font-family: var(--font-sans);
+  font-size: 1.02rem;
+  line-height: 1.65;
+  color: var(--text-secondary);
+  max-width: 580px;
+}
+
+.hero-cta-group {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.hero-specs-row {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--sothebys-border);
+  margin-top: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.hero-spec-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.spec-val {
+  font-family: var(--font-mono);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--champagne-gold);
+}
+
+.spec-lbl {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+/* ==========================================================================
+   HERO RIGHT: INTERACTIVE VEHICLE DETECTION ROADWAY ANIMATION
+   ========================================================================== */
+.roadway-surveillance-container {
+  position: relative;
+  background: #020A14;
+  border: 1px solid var(--sothebys-border);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 1px var(--champagne-gold);
+}
+
+.roadway-header-hud {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.25rem;
+  background: rgba(0, 34, 68, 0.7);
+  border-bottom: 1px solid var(--sothebys-border);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--champagne-gold);
+}
+
+.roadway-stage {
+  position: relative;
+  height: 380px;
+  background: radial-gradient(ellipse at 50% 40%, #07182E 0%, #020A14 85%);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Roadway Lane Graphics */
+.roadway-surface {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 220px;
+  background: linear-gradient(180deg, #0A1626 0%, #040A12 100%);
+  border-top: 2px solid #1E3A5F;
+}
+
+.roadway-curb {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 12px;
+  background: repeating-linear-gradient(
+    90deg,
+    #F59E0B 0px,
+    #F59E0B 30px,
+    #111827 30px,
+    #111827 60px
+  );
+  opacity: 0.75;
+}
+
+.roadway-lane-divider {
+  position: absolute;
+  bottom: 35px;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.4) 0px,
+    rgba(255, 255, 255, 0.4) 40px,
+    transparent 40px,
+    transparent 80px
+  );
+}
+
+/* Restricted No-Parking ROI Polygon */
+.roi-zone-boundary {
+  position: absolute;
+  left: 20%;
+  right: 20%;
+  top: 75px;
+  bottom: 45px;
+  border: 2px dashed #F59E0B;
+  background: rgba(245, 158, 11, 0.05);
+  border-radius: 6px;
+  box-shadow: 0 0 25px rgba(245, 158, 11, 0.15) inset, 0 0 15px rgba(245, 158, 11, 0.2);
+  transition: all 0.4s ease;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.roi-zone-boundary.alert-crimson {
+  border-color: #EF4444;
+  background: rgba(239, 68, 68, 0.1);
+  box-shadow: 0 0 35px rgba(239, 68, 68, 0.25) inset, 0 0 25px rgba(239, 68, 68, 0.35);
+}
+
+.roi-label-chip {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #001A33;
+  border: 1px solid #F59E0B;
+  color: #F59E0B;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 10px;
+  border-radius: 3px;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+}
+
+.roi-zone-boundary.alert-crimson .roi-label-chip {
+  border-color: #EF4444;
+  color: #EF4444;
+}
+
+/* Moving Vehicle Actor Container */
+.vehicle-carrier {
+  position: absolute;
+  bottom: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 4;
+  transition: transform 1.8s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.5s ease;
+  pointer-events: none;
+}
+
+.vehicle-vector-svg {
+  filter: drop-shadow(0 15px 20px rgba(0, 0, 0, 0.7));
+  display: block;
+}
+
+/* Sleek Bounding Box with Reticle Corners */
+.ai-bounding-box {
+  position: absolute;
+  inset: -14px -14px -8px -14px;
+  border: 1.5px solid var(--champagne-gold);
+  border-radius: 4px;
+  transition: all 0.35s ease;
+  pointer-events: none;
+}
+
+.ai-bounding-box.warning-state {
+  border-color: var(--amber);
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.4);
+}
+
+.ai-bounding-box.crimson-state {
+  border-color: var(--crimson);
+  box-shadow: 0 0 25px rgba(239, 68, 68, 0.5);
+}
+
+/* Corner Reticles */
+.box-corner {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-color: inherit;
+}
+.box-corner.tl { top: -2px; left: -2px; border-top: 3px solid; border-left: 3px solid; }
+.box-corner.tr { top: -2px; right: -2px; border-top: 3px solid; border-right: 3px solid; }
+.box-corner.bl { bottom: -2px; left: -2px; border-bottom: 3px solid; border-left: 3px solid; }
+.box-corner.br { bottom: -2px; right: -2px; border-bottom: 3px solid; border-right: 3px solid; }
+
+/* Dynamic Target Label Tag */
+.ai-target-tag {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(2, 12, 23, 0.95);
+  border: 1px solid var(--champagne-gold);
+  border-radius: 4px;
+  padding: 5px 12px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-white);
+  white-space: nowrap;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  transition: all 0.3s ease;
+}
+
+.ai-bounding-box.warning-state .ai-target-tag {
+  border-color: var(--amber);
+  color: #FCD34D;
+}
+
+.ai-bounding-box.crimson-state .ai-target-tag {
+  border-color: var(--crimson);
+  color: #FCA5A5;
+}
+
+.tag-line-top {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 700;
+}
+
+.tag-line-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-size: 0.68rem;
+  color: var(--text-secondary);
+}
+
+/* Optical Scan Beam Highlight */
+.optical-scan-beam {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(180deg, transparent 0%, #10B981 50%, transparent 100%);
+  box-shadow: 0 0 16px #10B981;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.optical-scan-beam.scanning {
+  opacity: 1;
+  animation: sweepScan 1.6s infinite alternate ease-in-out;
+}
+
+@keyframes sweepScan {
+  0% { left: 0%; }
+  100% { left: 100%; }
+}
+
+/* HUD Interactive Footer Toolbar */
+.roadway-hud-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.65rem 1.25rem;
+  background: rgba(0, 34, 68, 0.85);
+  border-top: 1px solid var(--sothebys-border);
+}
+
+.hud-btn-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-hud-control {
+  background: rgba(11, 25, 44, 0.8);
+  border: 1px solid var(--sothebys-border);
+  color: var(--champagne-gold);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.btn-hud-control:hover {
+  background: var(--champagne-gold);
+  color: var(--sothebys-navy-deep);
+}
+
+/* ==========================================================================
+   LIVE SURVEILLANCE & CONTROLS CONTAINER (`#live-monitoring`)
+   ========================================================================== */
+.surveillance-section {
+  position: relative;
+  z-index: 1;
+  padding: 3.5rem 2rem;
+  max-width: 1360px;
+  margin: 0 auto;
+}
+
+.section-head-luxury {
+  text-align: center;
+  max-width: 820px;
+  margin: 0 auto 2.5rem;
+}
+
+.section-pretitle {
+  font-family: var(--font-sans);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--champagne-gold);
+  margin-bottom: 0.5rem;
+}
+
+.section-headline {
+  font-family: var(--font-serif);
+  font-size: 2.3rem;
+  font-weight: 700;
+  color: var(--text-white);
+  line-height: 1.25;
+}
+
+.section-description {
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  margin-top: 0.75rem;
+}
+
+/* Live Stream & Upload Split Layout */
+.surveillance-split-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 2rem;
+  margin-bottom: 2.5rem;
+}
+
+/* Live Camera Feed Frame */
+.video-stream-card {
+  background: #010812;
+  border: 1px solid var(--sothebys-border);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: var(--shadow-elevated);
+}
+
+.stream-frame-header {
+  padding: 0.85rem 1.4rem;
+  background: linear-gradient(90deg, #001A33 0%, #0B192C 100%);
+  border-bottom: 1px solid var(--sothebys-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.stream-meta-title {
+  font-family: var(--font-serif);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-white);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.stream-viewport-wrapper {
+  position: relative;
+  background: #000;
+  min-height: 380px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.active-camera-feed {
+  width: 100%;
+  height: auto;
+  display: block;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+.no-feed-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 2rem;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.no-feed-placeholder i {
+  color: var(--champagne-gold);
+  margin-bottom: 1.25rem;
+  opacity: 0.8;
+}
+
+/* Upload & Control Panel */
+.upload-controls-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.file-upload-box {
+  background: var(--sothebys-panel);
+  border: 1px solid var(--sothebys-border);
+  border-radius: 8px;
+  padding: 1.75rem;
+  box-shadow: var(--shadow-subtle);
+}
+
+.upload-form-group {
+  margin-bottom: 1.25rem;
+}
+
+.custom-file-label {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--champagne-gold);
+  margin-bottom: 0.5rem;
+}
+
+.custom-file-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: #040E1C;
+  border: 1px dashed var(--sothebys-border-gold);
+  border-radius: 4px;
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.custom-file-input:hover {
+  border-color: var(--champagne-gold);
+  background: #071529;
+}
+
+.protocol-guide-card {
+  background: rgba(0, 26, 51, 0.6);
+  border: 1px solid var(--sothebys-border);
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+.protocol-title {
+  font-family: var(--font-serif);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--champagne-gold);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.protocol-steps-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+.protocol-steps-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  line-height: 1.5;
+}
+
+.protocol-step-num {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--champagne-gold);
+  background: rgba(197, 168, 128, 0.1);
+  border: 1px solid var(--sothebys-border-gold);
+  padding: 1px 6px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* ==========================================================================
+   TABLES (SOTHEBY'S LUXURY REGISTRY TABLE)
+   ========================================================================== */
+.sothebys-table-container {
+  background: var(--sothebys-panel);
+  border: 1px solid var(--sothebys-border);
+  border-radius: 8px;
+  box-shadow: var(--shadow-elevated);
+  overflow: hidden;
+}
+
+.table-toolbar {
+  padding: 1.1rem 1.6rem;
+  background: linear-gradient(180deg, #001A33 0%, #0B192C 100%);
+  border-bottom: 1px solid var(--sothebys-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.toolbar-title-wrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.toolbar-title {
+  font-family: var(--font-serif);
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-white);
+  letter-spacing: 0.02em;
+}
+
+.toolbar-subtitle {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.table-controls-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.sothebys-search-input {
+  background: #040E1C;
+  border: 1px solid var(--sothebys-border);
+  border-radius: 4px;
+  padding: 0.55rem 1rem 0.55rem 2.2rem;
+  color: var(--text-white);
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  width: 280px;
+  transition: var(--transition-smooth);
+}
+
+.sothebys-search-input:focus {
+  outline: none;
+  border-color: var(--champagne-gold);
+  box-shadow: 0 0 10px var(--champagne-glow);
+}
+
+.search-input-wrap {
+  position: relative;
+}
+
+.search-input-icon {
+  position: absolute;
+  left: 0.8rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.table-responsive-wrapper {
+  overflow-x: auto;
+  width: 100%;
+}
+
+.sothebys-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.84rem;
+}
+
+.sothebys-table th {
+  background: #030C18;
+  color: var(--champagne-gold);
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.95rem 1.25rem;
+  border-bottom: 1px solid var(--sothebys-border);
+  white-space: nowrap;
+}
+
+.sothebys-table td {
+  padding: 1.05rem 1.25rem;
+  border-bottom: 1px solid rgba(27, 54, 93, 0.45);
+  color: var(--text-primary);
+  vertical-align: middle;
+}
+
+.sothebys-table tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.sothebys-table tbody tr:hover {
+  background-color: rgba(27, 54, 93, 0.22);
+}
+
+.table-empty-message {
+  text-align: center;
+  padding: 3rem 1.5rem;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+/* ==========================================================================
+   THE FOUR PILLARS SECTION
+   ========================================================================== */
+.pillars-section {
+  position: relative;
+  z-index: 1;
+  padding: 4.5rem 2rem;
+  max-width: 1360px;
+  margin: 0 auto;
+}
+
+.pillars-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  margin-top: 2.5rem;
+}
+
+.pillar-card {
+  background: var(--sothebys-panel);
+  border: 1px solid var(--sothebys-border);
+  border-radius: 6px;
+  padding: 2rem 1.6rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: var(--shadow-subtle);
+  transition: var(--transition-smooth);
+}
+
+.pillar-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--sothebys-border-gold);
+  box-shadow: var(--shadow-elevated), 0 0 20px rgba(197, 168, 128, 0.15);
+}
+
+.pillar-number {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: var(--champagne-gold);
+  margin-bottom: 1rem;
+}
+
+.pillar-icon-box {
+  width: 48px;
+  height: 48px;
+  border-radius: 6px;
+  background: rgba(0, 34, 68, 0.8);
+  border: 1px solid var(--sothebys-border-gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--champagne-gold);
+  font-size: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.pillar-title {
+  font-family: var(--font-serif);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-white);
+  line-height: 1.3;
+  margin-bottom: 0.75rem;
+}
+
+.pillar-desc {
+  font-family: var(--font-sans);
+  font-size: 0.84rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.pillar-badge-footer {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--sothebys-border);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--champagne-gold-light);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* ==========================================================================
+   ABOUT US SECTION
+   ========================================================================== */
+.about-section {
+  position: relative;
+  z-index: 1;
+  padding: 4.5rem 2rem;
+  max-width: 1360px;
+  margin: 0 auto;
+}
+
+.about-editorial-container {
+  background: linear-gradient(135deg, #0B192C 0%, #001A33 100%);
+  border: 1px solid var(--sothebys-border);
+  border-radius: 8px;
+  padding: 3.5rem;
+  box-shadow: var(--shadow-elevated);
+}
+
+.about-editorial-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 3.5rem;
+  align-items: center;
+}
+
+.about-title {
+  font-family: var(--font-serif);
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--text-white);
+  line-height: 1.25;
+}
+
+.about-subtitle-gold {
+  color: var(--champagne-gold);
+  font-style: italic;
+  display: block;
+  margin-top: 0.35rem;
+}
+
+.about-body-text {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.about-cards-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+  margin-top: 2.5rem;
+}
+
+.about-mini-card {
+  background: rgba(4, 14, 28, 0.75);
+  border: 1px solid var(--sothebys-border);
+  border-radius: 6px;
+  padding: 1.4rem;
+}
+
+.mini-card-icon {
+  color: var(--champagne-gold);
+  font-size: 1.2rem;
+  margin-bottom: 0.65rem;
+}
+
+.mini-card-title {
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-white);
+  margin-bottom: 0.4rem;
+}
+
+.mini-card-text {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* ==========================================================================
+   FOOTER (4-COLUMN SOTHEBY'S DARK NAVY)
+   ========================================================================== */
+.sothebys-footer {
+  position: relative;
+  z-index: 1;
+  background: #001224;
+  border-top: 1px solid var(--sothebys-border);
+  padding: 4.5rem 2rem 2.5rem;
+  margin-top: 4rem;
+}
+
+.footer-container {
+  max-width: 1360px;
+  margin: 0 auto;
+}
+
+.footer-grid-4col {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1.2fr;
+  gap: 3rem;
+  margin-bottom: 3rem;
+}
+
+.footer-col-title {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-white);
+  letter-spacing: 0.06em;
+  margin-bottom: 1.25rem;
+  position: relative;
+  padding-bottom: 0.5rem;
+}
+
+.footer-col-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 24px;
+  height: 2px;
+  background: var(--champagne-gold);
+}
+
+.footer-brand-bio {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.65;
+  margin-top: 1rem;
+  max-width: 320px;
+}
+
+.footer-links-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.footer-link-item {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.84rem;
+  transition: var(--transition-smooth);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.footer-link-item:hover {
+  color: var(--champagne-gold);
+  transform: translateX(3px);
+}
+
+.footer-bottom-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(27, 54, 93, 0.6);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+/* ==========================================================================
+   STATUTORY E-CHALLAN PRINTABLE PAGE (`templates/challan.html`)
+   ========================================================================== */
+.challan-page-wrapper {
+  padding: 2.5rem 1rem;
+  min-height: 100vh;
+}
+
+.challan-luxury-sheet {
+  max-width: 860px;
+  margin: 0 auto;
+  background: #FFFFFF;
+  color: #0A1626;
+  border: 3px double #002244;
+  padding: 2.5rem 3rem;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+  border-radius: 4px;
+}
+
+.challan-gov-header {
+  text-align: center;
+  border-bottom: 2px solid #002244;
+  padding-bottom: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.challan-seal-emblem {
+  width: 72px;
+  height: 72px;
+  border: 2px solid #002244;
+  border-radius: 50%;
+  margin: 0 auto 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  color: #002244;
+  letter-spacing: 0.05em;
+  line-height: 1.2;
+}
+
+.challan-gov-title {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #002244;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.challan-gov-sub {
+  font-size: 0.82rem;
+  color: #475569;
+  margin-top: 2px;
+  letter-spacing: 0.04em;
+}
+
+.challan-notice-heading {
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #002244;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-top: 0.75rem;
+  padding: 4px 12px;
+  background: #F1F5F9;
+  display: inline-block;
+  border: 1px solid #CBD5E1;
+}
+
+.challan-details-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1.25rem;
+  font-size: 0.88rem;
+}
+
+.challan-details-table td {
+  padding: 0.65rem 0.75rem;
+  border-bottom: 1px solid #E2E8F0;
+  vertical-align: top;
+}
+
+.challan-details-table td:first-child {
+  width: 38%;
+  font-weight: 600;
+  color: #334155;
+  background: #F8FAFC;
+}
+
+.challan-status-panel {
+  margin-top: 1.5rem;
+  padding: 1.25rem;
+  border: 1px solid #CBD5E1;
+  background: #F8FAFC;
+  border-radius: 4px;
+}
+
+.challan-evidence-frame {
+  margin-top: 1.5rem;
+  border: 1px solid #CBD5E1;
+  padding: 0.5rem;
+  background: #F1F5F9;
+  text-align: center;
+}
+
+.challan-evidence-frame img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Print Overrides */
+@media print {
+  body {
+    background: #FFFFFF !important;
+    color: #000000 !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .challan-luxury-sheet {
+    box-shadow: none !important;
+    border: 2px solid #000000 !important;
+    padding: 1rem !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+  }
+  a {
+    text-decoration: none !important;
+    color: #000000 !important;
+  }
+}
+
+/* ==========================================================================
+   RESPONSIVE DESIGN BREAKPOINTS
+   ========================================================================== */
+@media (max-width: 1024px) {
+  .hero-grid {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+  .surveillance-split-grid {
+    grid-template-columns: 1fr;
+  }
+  .pillars-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .about-editorial-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  .footer-grid-4col {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .sothebys-nav-menu {
+    display: none;
+  }
+  .mobile-nav-toggle {
+    display: block;
+  }
+  .sothebys-nav-menu.open {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #001A33;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--sothebys-border-gold);
+  }
+  .hero-title {
+    font-size: 2.3rem;
+  }
+  .pillars-grid {
+    grid-template-columns: 1fr;
+  }
+  .about-cards-row {
+    grid-template-columns: 1fr;
+  }
+  .footer-grid-4col {
+    grid-template-columns: 1fr;
+  }
+  .table-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .sothebys-search-input {
+    width: 100%;
+  }
+}
+
+
+/* ==========================================================================
+   AUTHENTICATION BUTTONS, MODALS & SIDEBAR NAVIGATION
+   ========================================================================== */
+
+/* Navbar Auth Buttons */
+.btn-signin-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 1.25rem;
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--champagne-gold);
+  background: transparent;
+  border: 1px solid var(--champagne-gold);
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: var(--transition-smooth);
+}
+
+.btn-signin-outline:hover {
+  background: rgba(197, 168, 128, 0.15);
+  color: var(--champagne-gold-light);
+  box-shadow: 0 0 12px var(--champagne-glow);
+  transform: translateY(-1px);
+}
+
+.btn-signup-solid {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 1.35rem;
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #001A33;
+  background: linear-gradient(135deg, #DFCA9B 0%, #C5A880 100%);
+  border: 1px solid #DFCA9B;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: 0 4px 14px rgba(197, 168, 128, 0.25);
+  transition: var(--transition-smooth);
+}
+
+.btn-signup-solid:hover {
+  background: linear-gradient(135deg, #FFF 0%, #C5A880 100%);
+  color: #001020;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(197, 168, 128, 0.4);
+}
+
+/* Modal Backdrops & Dialogs */
+.sothebys-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 16, 32, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  z-index: 3000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.sothebys-modal-backdrop.open {
+  display: flex;
+  opacity: 1;
+}
+
+.sothebys-modal-box {
+  background: var(--sothebys-panel);
+  border: 1px solid var(--sothebys-border-gold);
+  border-radius: 8px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 30px rgba(197, 168, 128, 0.15);
+  max-width: 540px;
+  width: 100%;
+  max-height: 92vh;
+  overflow-y: auto;
+  transform: translateY(20px);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sothebys-modal-box.modal-wide {
+  max-width: 780px;
+}
+
+.sothebys-modal-backdrop.open .sothebys-modal-box {
+  transform: translateY(0);
+}
+
+.sothebys-modal-header {
+  padding: 1.35rem 1.8rem;
+  background: linear-gradient(135deg, #001A33 0%, #0B192C 100%);
+  border-bottom: 1px solid var(--sothebys-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sothebys-modal-title {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-white);
+  letter-spacing: 0.02em;
+}
+
+.sothebys-modal-close {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.25rem;
+  cursor: pointer;
+  padding: 0.25rem;
+  line-height: 1;
+  transition: var(--transition-smooth);
+}
+
+.sothebys-modal-close:hover {
+  color: var(--champagne-gold);
+}
+
+.sothebys-modal-body {
+  padding: 1.8rem;
+}
+
+/* Modal Form Fields */
+.sothebys-field-group {
+  margin-bottom: 1.25rem;
+}
+
+.sothebys-field-label {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--champagne-gold);
+  margin-bottom: 0.45rem;
+}
+
+.sothebys-field-input,
+.sothebys-field-select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: #040E1C;
+  border: 1px solid var(--sothebys-border);
+  border-radius: 4px;
+  color: var(--text-white);
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  transition: var(--transition-smooth);
+}
+
+.sothebys-field-input:focus,
+.sothebys-field-select:focus {
+  outline: none;
+  border-color: var(--champagne-gold);
+  box-shadow: 0 0 10px var(--champagne-glow);
+}
+
+/* Dashboard Sidebar Layout */
+.dashboard-layout-wrapper {
+  display: flex;
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+
+.sothebys-sidebar {
+  width: 270px;
+  background: #001A33;
+  border-right: 1px solid var(--sothebys-border);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  min-height: 100vh;
+  position: sticky;
+  top: 0;
+  transition: var(--transition-smooth);
+}
+
+.sidebar-brand-block {
+  padding: 1.4rem 1.6rem;
+  border-bottom: 1px solid var(--sothebys-border);
+}
+
+.sidebar-officer-badge {
+  padding: 1.1rem 1.6rem;
+  background: rgba(11, 25, 44, 0.75);
+  border-bottom: 1px solid var(--sothebys-border);
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.officer-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #002244;
+  border: 1px solid var(--champagne-gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--champagne-gold);
+  font-size: 0.95rem;
+  flex-shrink: 0;
+}
+
+.officer-info-wrap {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.officer-name {
+  font-family: var(--font-sans);
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--text-white);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.officer-area {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--champagne-gold);
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar-nav-list {
+  padding: 1.25rem 0;
+  list-style: none;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.sidebar-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.85rem 1.6rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-left: 3px solid transparent;
+  transition: var(--transition-smooth);
+  cursor: pointer;
+}
+
+.sidebar-nav-link i {
+  font-size: 1rem;
+  width: 18px;
+  text-align: center;
+}
+
+.sidebar-nav-link:hover {
+  color: var(--champagne-gold-light);
+  background: rgba(27, 54, 93, 0.25);
+}
+
+.sidebar-nav-link.active {
+  color: var(--champagne-gold);
+  background: rgba(197, 168, 128, 0.09);
+  border-left-color: var(--champagne-gold);
+}
+
+.sidebar-footer-block {
+  padding: 1.25rem 1.6rem;
+  border-top: 1px solid var(--sothebys-border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.btn-sidebar-logout {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.55rem;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #F87171;
+  border-radius: 4px;
+  font-family: var(--font-sans);
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.btn-sidebar-logout:hover {
+  background: #EF4444;
+  color: #FFF;
+}
+
+.dashboard-content-main {
+  flex: 1;
+  padding: 2.2rem 2.8rem;
+  overflow-y: auto;
+  max-width: calc(100% - 270px);
+}
+
+.operator-top-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.8rem;
+  background: linear-gradient(135deg, rgba(0, 34, 68, 0.85) 0%, rgba(11, 25, 44, 0.7) 100%);
+  border: 1px solid var(--sothebys-border);
+  border-radius: 6px;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+@media (max-width: 992px) {
+  .dashboard-layout-wrapper {
+    flex-direction: column;
+  }
+  .sothebys-sidebar {
+    width: 100%;
+    min-height: auto;
+    position: relative;
+  }
+  .dashboard-content-main {
+    max-width: 100%;
+    padding: 1.5rem;
+  }
+}

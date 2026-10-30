@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PARK-ALERT | e-Challan Settlement #{{ violation.violation_id }}</title>
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Unified Sotheby's Luxury Design System -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+
+  <style>
+    .payment-container {
+      max-width: 760px;
+      margin: 3rem auto;
+      padding: 0 1rem;
+    }
+    .payment-card {
+      background: var(--sothebys-panel);
+      border: 1px solid var(--sothebys-border);
+      border-radius: 8px;
+      box-shadow: var(--shadow-elevated);
+      overflow: hidden;
+    }
+    .payment-header {
+      background: linear-gradient(135deg, #001A33 0%, #002244 100%);
+      border-bottom: 1px solid var(--sothebys-border-gold);
+      padding: 1.4rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .payment-body {
+      padding: 2.2rem;
+    }
+    .detail-row-luxury {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.8rem 0;
+      border-bottom: 1px solid rgba(27, 54, 93, 0.4);
+      font-size: 0.9rem;
+    }
+    .detail-row-luxury:last-child {
+      border-bottom: none;
+    }
+    .detail-label-muted {
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient Architectural Atmosphere -->
+  <div class="sothebys-atmosphere">
+    <div class="sothebys-atmosphere-glow-1"></div>
+    <div class="sothebys-atmosphere-glow-2"></div>
+    <div class="sothebys-atmosphere-grid"></div>
+  </div>
+
+  <!-- SOTHEBY'S TOP NAVIGATION -->
+  <header class="sothebys-nav-header">
+    <div class="nav-inner-container">
+      <a href="/" class="sothebys-brand">
+        <div class="brand-emblem">
+          <i class="fa-solid fa-shield-halved"></i>
+        </div>
+        <div class="brand-wordmark-wrap">
+          <span class="brand-wordmark">PARK-ALERT</span>
+          <span class="brand-tagline">Settlement Gateway</span>
+        </div>
+      </a>
+
+      <div class="sothebys-nav-actions">
+        <a href="/" class="btn-terminal-outline">
+          <i class="fa-solid fa-house"></i>
+          <span>RETURN HOME</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN PAYMENT CHECKOUT -->
+  <main class="payment-container">
+    <div class="payment-card">
+      
+      <div class="payment-header">
+        <div>
+          <span class="tracking-luxury text-gold" style="font-size: 0.72rem; font-weight: 700;">STATUTORY E-CHALLAN SETTLEMENT</span>
+          <h2 style="font-family: var(--font-serif); font-size: 1.35rem; color: #FFF; margin: 2px 0 0;" id="challanId">
+            Citation #{{ violation.violation_id }}
+          </h2>
+        </div>
+        <span class="status-pill status-pill-unpaid" id="statusBadge">
+          <i class="fa-solid fa-circle-exclamation me-1"></i>UNPAID
+        </span>
+      </div>
+
+      <div class="payment-body">
+        
+        <!-- PENDING STATE -->
+        <section id="pendingState" {% if is_paid %}hidden{% endif %}>
+          <div style="text-align: center; margin-bottom: 2rem;">
+            <div style="font-size: 0.76rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.5rem;">
+              Target Vehicle Registration
+            </div>
+            <span class="sothebys-plate-badge" style="font-size: 1.15rem; padding: 4px 14px;">
+              <span class="plate-country-code">IND</span>{{ violation.plate_number }}
+            </span>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 2rem; align-items: center; margin-bottom: 2rem;">
+            <div>
+              <div class="detail-row-luxury">
+                <span class="detail-label-muted">Vehicle Type</span>
+                <strong style="color: #FFF;">{{ violation.vehicle_type }}</strong>
+              </div>
+              <div class="detail-row-luxury">
+                <span class="detail-label-muted">Dwell Duration</span>
+                <strong style="font-family: var(--font-mono); color: var(--amber);">{{ violation.duration_sec }}s (Grace: 30s)</strong>
+              </div>
+              <div class="detail-row-luxury">
+                <span class="detail-label-muted">Detection Time</span>
+                <span style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-secondary);">{{ violation.timestamp }}</span>
+              </div>
+              <div class="detail-row-luxury">
+                <span class="detail-label-muted">Compounding Fine</span>
+                <strong class="text-crimson" style="font-size: 1.35rem; font-family: var(--font-mono);">&#8377;{{ fine_text }}</strong>
+              </div>
+            </div>
+
+            <!-- QR Code Preview Block -->
+            <div style="text-align: center; background: rgba(0, 34, 68, 0.4); border: 1px solid var(--sothebys-border); border-radius: 6px; padding: 1.25rem;">
+              {% if qr_enabled %}
+              <img src="{{ qr_url }}" alt="UPI payment QR" style="width: 140px; height: 140px; border-radius: 4px; border: 1px solid var(--champagne-gold); background: #FFF; padding: 4px;">
+              <div style="font-size: 0.7rem; color: var(--text-secondary); margin-top: 0.5rem;">
+                Official UPI QR Gateway Preview
+              </div>
+              {% else %}
+              <i class="fa-solid fa-qrcode fa-3x text-gold" style="opacity: 0.7; margin-bottom: 0.5rem;"></i>
+              <div style="font-size: 0.75rem; color: var(--text-secondary);">
+                Direct UPI / Card Settlement
+              </div>
+              {% endif %}
+            </div>
+          </div>
+
+          <div id="payError" style="display: none; padding: 0.75rem 1rem; border-radius: 4px; background: rgba(239, 68, 68, 0.15); border: 1px solid #EF4444; color: #FCA5A5; font-size: 0.84rem; margin-bottom: 1.25rem;"></div>
+
+          <button type="button" class="btn-sothebys-gold" id="simulatePayBtn"
+                  style="width: 100%; padding: 1rem; font-size: 0.92rem; justify-content: center;"
+                  data-violation-id="{{ violation.violation_id }}"
+                  {% if not simulation_enabled %}disabled{% endif %}>
+            <i class="fa-solid fa-bolt me-2"></i>Simulate Instant Payment (UPI / Card Settlement)
+          </button>
+
+          {% if not simulation_enabled %}
+          <div style="font-size: 0.78rem; color: var(--text-secondary); margin-top: 0.85rem; text-align: center;">
+            Live gateway active. For local tests, set <code>PAYMENT_SIMULATION=1</code> in <code>.env</code>.
+          </div>
+          {% else %}
+          <div style="font-size: 0.78rem; color: var(--champagne-gold-light); margin-top: 0.85rem; text-align: center; background: rgba(197, 168, 128, 0.08); padding: 8px 12px; border-radius: 4px; border: 1px solid var(--sothebys-border-gold);">
+            <i class="fa-solid fa-circle-info me-1"></i><strong>Simulation Mode:</strong> Completes compounding transaction and updates registry to PAID immediately.
+          </div>
+          {% endif %}
+        </section>
+
+        <!-- SUCCESS STATE -->
+        <section id="successState" style="text-align: center; padding: 1rem 0;" {% if not is_paid %}hidden{% endif %}>
+          <div style="font-size: 3.5rem; color: var(--emerald); margin-bottom: 1rem;">
+            <i class="fa-solid fa-circle-check"></i>
+          </div>
+          <h3 style="font-family: var(--font-serif); font-size: 1.6rem; color: #FFF; margin-bottom: 0.5rem;">
+            Compounding Settlement Successful
+          </h3>
+          <p style="font-size: 0.9rem; color: var(--text-secondary); max-width: 480px; margin: 0 auto 1.75rem;">
+            Citation #{{ violation.violation_id }} for vehicle <strong style="color: #FFF;">{{ violation.plate_number }}</strong> has been officially cleared in the state registry.
+          </p>
+
+          <div style="background: rgba(0, 34, 68, 0.5); border: 1px solid var(--sothebys-border); border-radius: 6px; padding: 1.25rem; max-width: 480px; margin: 0 auto; text-align: left;">
+            <div class="detail-row-luxury">
+              <span class="detail-label-muted">Transaction ID:</span>
+              <strong style="font-family: var(--font-mono); color: var(--champagne-gold);" id="txnId">{{ payment_ref or "—" }}</strong>
+            </div>
+            <div class="detail-row-luxury">
+              <span class="detail-label-muted">Amount Remitted:</span>
+              <strong class="text-emerald" style="font-family: var(--font-mono);">&#8377;{{ fine_text }}</strong>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    (function () {
+      'use strict';
+
+      var button = document.getElementById('simulatePayBtn');
+      var errorBox = document.getElementById('payError');
+      var pendingState = document.getElementById('pendingState');
+      var successState = document.getElementById('successState');
+      var txnText = document.getElementById('txnId');
+      var statusBadge = document.getElementById('statusBadge');
+
+      if (!button) return;
+
+      var idleLabel = button.innerHTML;
+
+      function showError(message) {
+        if (!errorBox) return;
+        errorBox.textContent = message;
+        errorBox.style.display = 'block';
+      }
+
+      function setBusy(busy) {
+        button.disabled = busy;
+        button.innerHTML = busy 
+          ? '<i class="fa-solid fa-circle-notch fa-spin me-2"></i>Processing Settlement...' 
+          : idleLabel;
+      }
+
+      function showSuccess(transactionId) {
+        if (txnText) txnText.textContent = transactionId || '-';
+        if (statusBadge) {
+          statusBadge.className = 'status-pill status-pill-paid';
+          statusBadge.innerHTML = '<i class="fa-solid fa-circle-check me-1"></i>PAID';
+        }
+        if (pendingState) pendingState.hidden = true;
+        if (successState) successState.hidden = false;
+      }
+
+      button.addEventListener('click', function () {
+        var violationId = button.getAttribute('data-violation-id');
+        if (errorBox) errorBox.style.display = 'none';
+        setBusy(true);
+
+        var tokenParam = window.location.search || '';
+
+        fetch('/pay_fine/' + violationId + tokenParam, { method: 'POST' })
+          .then(function (res) {
+            return res.json().then(function (data) {
+              return { ok: res.ok, data: data };
+            });
+          })
+          .then(function (result) {
+            if (result.ok && result.data.status === 'success') {
+              showSuccess(result.data.transaction_id);
+            } else {
+              showError(result.data.message || 'The simulated payment could not be completed.');
+              setBusy(false);
+            }
+          })
+          .catch(function () {
+            showError('Could not reach the server. Check the connection and try again.');
+            setBusy(false);
+          });
+      });
+    })();
+  </script>
+</body>
+</html>

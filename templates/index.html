@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PARK-ALERT | AI Assisted No Parking Management System</title>
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Unified Sotheby's Luxury Design System -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+</head>
+<body>
+
+  <!-- Ambient Architectural Atmosphere -->
+  <div class="sothebys-atmosphere">
+    <div class="sothebys-atmosphere-glow-1"></div>
+    <div class="sothebys-atmosphere-glow-2"></div>
+    <div class="sothebys-atmosphere-grid"></div>
+  </div>
+
+  <!-- ======================================================================
+       1. TOP PUBLIC NAVIGATION (PUBLIC MODE)
+       ====================================================================== -->
+  <header class="sothebys-nav-header" id="publicNavHeader">
+    <div class="nav-inner-container">
+      <!-- Left: Prominent, bold PARK-ALERT title with official crest shield icon -->
+      <a href="/" class="sothebys-brand">
+        <div class="brand-emblem">
+          <i class="fa-solid fa-shield-halved"></i>
+        </div>
+        <div class="brand-wordmark-wrap">
+          <span class="brand-wordmark">PARK-ALERT</span>
+          <span class="brand-tagline">Autonomous Traffic Enforcement</span>
+        </div>
+      </a>
+
+      <!-- Center: EXACTLY TWO LINKS (OVERVIEW & ABOUT US) -->
+      <nav>
+        <ul class="sothebys-nav-menu" id="navMenu">
+          <li><a href="#overview" class="nav-item-link active"><i class="fa-solid fa-compass me-1"></i>OVERVIEW</a></li>
+          <li><a href="#about-us" class="nav-item-link"><i class="fa-solid fa-landmark me-1"></i>ABOUT US</a></li>
+        </ul>
+      </nav>
+
+      <!-- Right: Sign In (gold outline) & Sign Up (solid champagne gold fill) -->
+      <div class="sothebys-nav-actions" id="publicNavActions">
+        <button type="button" class="btn-signin-outline" onclick="openSignInModal()">
+          <i class="fa-solid fa-arrow-right-to-bracket me-1"></i>Sign In
+        </button>
+        <button type="button" class="btn-signup-solid" onclick="openSignUpModal()">
+          <i class="fa-solid fa-user-plus me-1"></i>Sign Up
+        </button>
+        <button class="mobile-nav-toggle" id="mobileNavToggle" aria-label="Toggle Navigation">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ======================================================================
+       OPERATOR TOP STATUS BAR (ACTIVE WHEN AUTHENTICATED)
+       ====================================================================== -->
+  <div id="authenticatedTopBar" style="display: none; background: #001A33; border-bottom: 1px solid var(--sothebys-border-gold); padding: 0.75rem 2rem; position: sticky; top: 0; z-index: 1000;">
+    <div style="max-width: 1400px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <div class="brand-emblem" style="width: 32px; height: 32px; font-size: 0.85rem;">
+          <i class="fa-solid fa-shield-halved"></i>
+        </div>
+        <div>
+          <span style="font-family: var(--font-serif); font-size: 1.1rem; font-weight: 700; color: #FFF;">PARK-ALERT Operator Terminal</span>
+          <span style="font-size: 0.7rem; color: var(--champagne-gold); margin-left: 0.5rem; text-transform: uppercase; letter-spacing: 0.1em;">&bull; SEC 122/177 MVA ACTIVE</span>
+        </div>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 1.25rem;">
+        <div style="display: flex; align-items: center; gap: 0.65rem; background: rgba(11, 25, 44, 0.7); padding: 4px 12px; border-radius: 4px; border: 1px solid var(--sothebys-border);">
+          <span class="status-dot-pulse"></span>
+          <span id="topBarOfficerDisplay" style="font-size: 0.82rem; font-weight: 600; color: #FFF;">Officer on Duty</span>
+          <span style="color: var(--text-muted);">&bull;</span>
+          <span id="topBarAreaDisplay" style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--champagne-gold);">Sector 01</span>
+        </div>
+
+        <button type="button" class="btn-sm-action btn-sothebys-outline" onclick="openVehicleModal()">
+          <i class="fa-solid fa-car me-1 text-gold"></i>Register Vehicle
+        </button>
+
+        <button type="button" class="btn-sm-action btn-sothebys-outline" style="border-color: rgba(239, 68, 68, 0.4); color: #FCA5A5;" onclick="logoutOperator()">
+          <i class="fa-solid fa-power-off me-1"></i>Logout
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       AUTHENTICATED DASHBOARD DRAWER / SIDEBAR + MAIN STAGE
+       ====================================================================== -->
+  <div id="authenticatedDashboardView" style="display: none;" class="dashboard-layout-wrapper">
+    
+    <!-- LEFT-HAND SIDEBAR NAVIGATION -->
+    <aside class="sothebys-sidebar">
+      <div class="sidebar-brand-block">
+        <a href="/" class="sothebys-brand">
+          <div class="brand-emblem" style="width: 34px; height: 34px;">
+            <i class="fa-solid fa-shield-halved"></i>
+          </div>
+          <div class="brand-wordmark-wrap">
+            <span class="brand-wordmark" style="font-size: 1.2rem;">PARK-ALERT</span>
+            <span class="brand-tagline">Operator Console</span>
+          </div>
+        </a>
+      </div>
+
+      <!-- Officer Profile Card -->
+      <div class="sidebar-officer-badge">
+        <div class="officer-avatar">
+          <i class="fa-solid fa-user-shield"></i>
+        </div>
+        <div class="officer-info-wrap">
+          <span class="officer-name" id="sidebarOfficerName">Officer on Duty</span>
+          <span class="officer-area" id="sidebarOfficerArea">Sector 01</span>
+        </div>
+      </div>
+
+      <!-- Navigation Drawer Links -->
+      <ul class="sidebar-nav-list">
+        <li>
+          <a class="sidebar-nav-link active" onclick="scrollToSurveillanceHUD()">
+            <i class="fa-solid fa-video text-gold"></i>
+            <span>Live Surveillance HUD</span>
+          </a>
+        </li>
+        <li>
+          <a href="/unpaid" class="sidebar-nav-link">
+            <i class="fa-solid fa-circle-exclamation" style="color: var(--crimson);"></i>
+            <span>Unpaid Violations</span>
+          </a>
+        </li>
+        <li>
+          <a href="/paid" class="sidebar-nav-link">
+            <i class="fa-solid fa-circle-check" style="color: var(--emerald);"></i>
+            <span>Paid Violations</span>
+          </a>
+        </li>
+        <li>
+          <a class="sidebar-nav-link" onclick="openVehicleModal()">
+            <i class="fa-solid fa-id-card text-gold"></i>
+            <span>Register Vehicle Record</span>
+          </a>
+        </li>
+        <li>
+          <a class="sidebar-nav-link" onclick="togglePublicLandingView()">
+            <i class="fa-solid fa-compass"></i>
+            <span>Public Overview</span>
+          </a>
+        </li>
+      </ul>
+
+      <!-- Sidebar Footer -->
+      <div class="sidebar-footer-block">
+        <button type="button" class="btn-sidebar-logout" onclick="logoutOperator()">
+          <i class="fa-solid fa-arrow-right-from-bracket me-1"></i>Logout Operator
+        </button>
+      </div>
+    </aside>
+
+    <!-- MAIN OPERATOR CONTENT -->
+    <main class="dashboard-content-main">
+      
+      <!-- Operator Banner Bar -->
+      <div class="operator-top-banner">
+        <div>
+          <span class="tracking-luxury text-gold" style="font-size: 0.72rem; font-weight: 700;">EDGE SURVEILLANCE RUNTIME</span>
+          <h2 style="font-family: var(--font-serif); font-size: 1.45rem; color: #FFF; margin: 2px 0 0;">
+            Active Curbside Surveillance HUD
+          </h2>
+        </div>
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <span class="status-pill status-pill-live">
+            <span class="status-dot-pulse"></span>
+            <span>SYSTEM ACTIVE (60 FPS)</span>
+          </span>
+          <button class="btn-sm-action btn-sothebys-gold" onclick="openVehicleModal()">
+            <i class="fa-solid fa-plus me-1"></i>New Vehicle Entry
+          </button>
+        </div>
+      </div>
+
+      <!-- Live Surveillance & Controls Split Grid -->
+      <div class="surveillance-split-grid" id="hudContainer">
+        
+        <!-- Video Stream Viewport -->
+        <div class="video-stream-card">
+          <div class="stream-frame-header">
+            <div class="stream-meta-title">
+              <i class="fa-solid fa-satellite-dish text-gold"></i>
+              <span>Live MJPEG Camera Feed &bull; Curbside Sector</span>
+            </div>
+            <span class="status-pill status-pill-live">
+              <span class="status-dot-pulse"></span>
+              <span id="dashboardStreamStatus">STREAM ACTIVE</span>
+            </span>
+          </div>
+
+          <div class="stream-viewport-wrapper">
+            <img id="dashboardVideoFeed" class="active-camera-feed" src="{{ url_for('video_feed') }}" alt="PARK-ALERT Live Video Stream" onerror="handleStreamOffline(this);">
+            <div id="dashboardNoFeedMsg" class="no-feed-placeholder" style="display: none;">
+              <i class="fa-solid fa-video-slash fa-3x"></i>
+              <h4 style="font-family: var(--font-serif); color: var(--text-white); margin-bottom: 0.5rem;">Camera Stream Offline or Standby</h4>
+              <p style="font-size: 0.85rem; max-width: 440px;">Upload a traffic surveillance MP4 video using the control panel on the right to launch the YOLOv8 tracking engine and calibrate the No-Parking polygon.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Video Upload & Calibration Guide -->
+        <div class="upload-controls-card">
+          <div class="file-upload-box">
+            <div style="margin-bottom: 1.25rem;">
+              <h3 style="font-family: var(--font-serif); font-size: 1.15rem; color: var(--text-white); margin-bottom: 0.25rem;">
+                <i class="fa-solid fa-cloud-arrow-up text-gold me-2"></i>Select Traffic Video Footage
+              </h3>
+              <p style="font-size: 0.8rem; color: var(--text-secondary);">Upload CCTV or dashcam footage to initiate automated dwell tracking.</p>
+            </div>
+
+            <form action="{{ url_for('upload_video') }}" method="POST" enctype="multipart/form-data">
+              <div class="upload-form-group">
+                <label for="dashboard_video_file" class="custom-file-label">Traffic Surveillance File (.mp4):</label>
+                <input type="file" id="dashboard_video_file" name="video_file" accept="video/*" class="custom-file-input" required>
+              </div>
+              <button type="submit" class="btn-sothebys-gold" style="width: 100%;">
+                <i class="fa-solid fa-vector-square me-2"></i>Upload Footage &amp; Configure ROI
+              </button>
+            </form>
+          </div>
+
+          <div class="protocol-guide-card">
+            <div class="protocol-title">
+              <i class="fa-solid fa-book-bookmark"></i>
+              <span>Surveillance Protocol</span>
+            </div>
+            <ol class="protocol-steps-list">
+              <li>
+                <span class="protocol-step-num">01</span>
+                <div>Upload surveillance video via the form above.</div>
+              </li>
+              <li>
+                <span class="protocol-step-num">02</span>
+                <div>Click <strong>4 points</strong> on the calibration window to define the No-Parking Region (ROI).</div>
+              </li>
+              <li>
+                <span class="protocol-step-num">03</span>
+                <div>Press key <strong>'s'</strong> to store the coordinates into <code>zone_config.json</code>.</div>
+              </li>
+              <li>
+                <span class="protocol-step-num">04</span>
+                <div>Automated warning email dispatches at <strong>20s</strong>; legal statutory notice issues at <strong>30s</strong>.</div>
+              </li>
+            </ol>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Real-Time Detected Violations Table -->
+      <div class="sothebys-table-container" style="margin-top: 2rem;">
+        <div class="table-toolbar">
+          <div class="toolbar-title-wrap">
+            <span class="toolbar-title">
+              <i class="fa-solid fa-table text-gold me-2"></i>Live Dwell Violations Feed
+            </span>
+            <span class="toolbar-subtitle">Auto-synchronizing via /violations_data &bull; Section 122 &amp; 177 MVA Compliance</span>
+          </div>
+          <div class="table-controls-wrap">
+            <span class="status-pill status-pill-live">
+              <span class="status-dot-pulse"></span>
+              <span>Live Sync Active (2s)</span>
+            </span>
+            <button class="btn-sm-action btn-sothebys-outline" onclick="fetchViolationsData()">
+              <i class="fa-solid fa-rotate me-1"></i>Refresh
+            </button>
+          </div>
+        </div>
+
+        <div class="table-responsive-wrapper">
+          <table class="sothebys-table">
+            <thead>
+              <tr>
+                <th>Track ID</th>
+                <th>License Plate</th>
+                <th>Vehicle Type</th>
+                <th>Dwell Time</th>
+                <th>Fine Amount</th>
+                <th>Payment Status</th>
+                <th>Email Notice</th>
+                <th>Detection Timestamp</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="dashboardViolationsTableBody">
+              <tr>
+                <td colspan="9" class="table-empty-message">
+                  <i class="fa-solid fa-circle-notch fa-spin text-gold me-2"></i>Loading live violation records from database...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ======================================================================
+       2. PUBLIC HERO SECTION & LANDING VIEW
+       ====================================================================== -->
+  <div id="publicLandingView">
+    <section class="hero-wrapper" id="overview">
+      <div class="hero-grid">
+        
+        <!-- LEFT COLUMN: Headline & Buttons -->
+        <div class="hero-left">
+          <!-- Category Tag -->
+          <div class="category-tag">
+            <i class="fa-solid fa-scale-balanced"></i>
+            <span>AI-ASSISTED NO PARKING DETECTION &amp; MVA SEC 122/177 ENFORCEMENT</span>
+          </div>
+
+          <!-- Main Display Headline (Serif) -->
+          <h1 class="hero-title">
+            AI Assisted
+            <span class="hero-title-italic-gold">No Parking Management System</span>
+          </h1>
+
+          <!-- Subtitle -->
+          <p class="hero-subtitle">
+            Edge-assisted real-time vehicle dwell monitoring, automated ANPR plate extraction via EasyOCR, and automated multi-tier email notice dispatch compliant with Section 122/177 of the Motor Vehicles Act.
+          </p>
+
+          <!-- Buttons Under Headline: Sign In / Operator Access & Register Department Account -->
+          <div class="hero-cta-group">
+            <button type="button" class="btn-sothebys-gold" onclick="openSignInModal()">
+              <i class="fa-solid fa-shield-halved me-1"></i>Sign In / Operator Access
+            </button>
+            <button type="button" class="btn-sothebys-outline" onclick="openSignUpModal()">
+              <i class="fa-solid fa-building-shield me-1"></i>Register Department Account
+            </button>
+          </div>
+
+          <!-- REMOVAL COMPLETED: Metric chips completely removed per instructions -->
+        </div>
+
+        <!-- RIGHT COLUMN: Looping CSS/SVG Roadway Vehicle Detection Animation -->
+        <div class="hero-right">
+          <div class="roadway-surveillance-container">
+            
+            <div class="roadway-header-hud">
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <span class="status-dot-pulse"></span>
+                <span>LIVE EDGE VISION PIPELINE</span>
+              </div>
+              <div id="roadwayFpsDisplay">60.0 FPS &bull; LOW LATENCY</div>
+            </div>
+
+            <!-- Roadway Stage -->
+            <div class="roadway-stage" id="roadwayStage">
+              <div class="roadway-surface">
+                <div class="roadway-curb"></div>
+                <div class="roadway-lane-divider"></div>
+              </div>
+
+              <!-- Glowing Dashed Yellow "No-Parking ROI Zone" Polygon -->
+              <div class="roi-zone-boundary" id="roiBoundary">
+                <span class="roi-label-chip" id="roiLabelChip">
+                  <i class="fa-solid fa-triangle-exclamation me-1"></i>RESTRICTED NO-PARKING ZONE &bull; SEC 122 MVA
+                </span>
+              </div>
+
+              <!-- Vehicle Actor Carrier (Cycling Car, Bike, Scooty) -->
+              <div class="vehicle-carrier" id="vehicleCarrier">
+                
+                <!-- 1. Luxury Sedan SVG Artwork -->
+                <svg id="actorCarSvg" class="vehicle-vector-svg" width="280" height="120" viewBox="0 0 280 120" fill="none">
+                  <ellipse cx="140" cy="112" rx="125" ry="8" fill="rgba(0,0,0,0.85)" filter="blur(4px)" />
+                  <path d="M 22 92 L 40 74 L 84 66 L 118 36 L 194 36 L 235 70 L 264 78 L 268 98 L 250 106 L 222 106 C 222 92 208 92 208 106 L 94 106 C 94 92 80 92 80 106 L 30 106 Z" fill="url(#sedanBodyGrad)" stroke="#1B365D" stroke-width="1.5"/>
+                  <path d="M 122 40 L 190 40 L 224 70 L 94 70 Z" fill="url(#sedanGlassGrad)" stroke="rgba(255,255,255,0.25)" stroke-width="1"/>
+                  <path d="M 160 40 L 158 70" stroke="#0B192C" stroke-width="2.5"/>
+                  <polygon points="20,86 32,82 30,94 18,92" fill="#E0F2FE" filter="drop-shadow(0 0 8px #38BDF8)"/>
+                  <polygon points="262,82 268,86 266,94 260,92" fill="#EF4444" filter="drop-shadow(0 0 6px #EF4444)"/>
+                  <circle cx="87" cy="105" r="16" fill="#030A14" stroke="#475569" stroke-width="3"/>
+                  <circle cx="87" cy="105" r="7" fill="#C5A880"/>
+                  <circle cx="215" cy="105" r="16" fill="#030A14" stroke="#475569" stroke-width="3"/>
+                  <circle cx="215" cy="105" r="7" fill="#C5A880"/>
+                  <rect x="18" y="94" width="24" height="8" rx="1" fill="#FFFFFF" stroke="#000" stroke-width="0.7"/>
+                  <rect x="18" y="94" width="4" height="8" fill="#1D4ED8"/>
+                  <text x="23" y="100" font-family="'JetBrains Mono', monospace" font-size="4.2" font-weight="bold" fill="#000">KA74</text>
+                  
+                  <defs>
+                    <linearGradient id="sedanBodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#1B365D" />
+                      <stop offset="45%" stop-color="#0B192C" />
+                      <stop offset="100%" stop-color="#040E1C" />
+                    </linearGradient>
+                    <linearGradient id="sedanGlassGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stop-color="rgba(197, 168, 128, 0.4)" />
+                      <stop offset="100%" stop-color="rgba(11, 25, 44, 0.9)" />
+                    </linearGradient>
+                  </defs>
+                </svg>
+
+                <!-- 2. Motorcycle / Bike SVG Artwork -->
+                <svg id="actorBikeSvg" class="vehicle-vector-svg" width="240" height="120" viewBox="0 0 240 120" fill="none" style="display: none;">
+                  <ellipse cx="120" cy="112" rx="100" ry="7" fill="rgba(0,0,0,0.85)" filter="blur(4px)" />
+                  <circle cx="118" cy="30" r="13" fill="#0B192C" stroke="#C5A880" stroke-width="1.5"/>
+                  <path d="M 104 42 C 104 42, 118 38, 134 42 L 144 68 L 112 72 Z" fill="#0B192C"/>
+                  <path d="M 50 90 L 78 68 L 122 72 L 152 56 L 168 76 L 180 94 L 162 102 L 138 102 C 138 90 124 90 124 102 L 72 102 Z" fill="#1B365D" stroke="#C5A880" stroke-width="1.2"/>
+                  <path d="M 152 56 L 148 44 L 138 44" stroke="#CBD5E1" stroke-width="2.5" stroke-linecap="round"/>
+                  <circle cx="58" cy="102" r="16" fill="#030A14" stroke="#64748B" stroke-width="3"/>
+                  <circle cx="172" cy="102" r="16" fill="#030A14" stroke="#64748B" stroke-width="3"/>
+                  <circle cx="160" cy="50" r="4.5" fill="#E0F2FE" filter="drop-shadow(0 0 6px #38BDF8)"/>
+                  <rect x="36" y="90" width="20" height="7" rx="1" fill="#FFFFFF" stroke="#000" stroke-width="0.5"/>
+                  <rect x="36" y="90" width="3.5" height="7" fill="#1D4ED8"/>
+                  <text x="40.5" y="95" font-family="'JetBrains Mono', monospace" font-size="3.8" font-weight="bold" fill="#000">KA04</text>
+                </svg>
+
+                <!-- 3. Scooter / Scooty SVG Artwork -->
+                <svg id="actorScootySvg" class="vehicle-vector-svg" width="220" height="120" viewBox="0 0 220 120" fill="none" style="display: none;">
+                  <ellipse cx="110" cy="112" rx="90" ry="7" fill="rgba(0,0,0,0.85)" filter="blur(4px)" />
+                  <circle cx="106" cy="32" r="12" fill="#0B192C" stroke="#C5A880" stroke-width="1.5"/>
+                  <path d="M 94 44 C 94 44, 108 40, 122 44 L 130 68 L 102 72 Z" fill="#0B192C"/>
+                  <path d="M 46 92 L 68 76 L 108 78 L 112 96 L 142 96 L 158 64 L 170 82 L 182 96 L 166 104 L 148 104 C 148 94 136 94 136 104 L 68 104 Z" fill="#0F223C" stroke="#C5A880" stroke-width="1.2"/>
+                  <path d="M 158 64 L 152 48 L 142 48" stroke="#94A3B8" stroke-width="2.5" stroke-linecap="round"/>
+                  <circle cx="56" cy="103" r="14" fill="#030A14" stroke="#64748B" stroke-width="3"/>
+                  <circle cx="168" cy="103" r="14" fill="#030A14" stroke="#64748B" stroke-width="3"/>
+                  <circle cx="156" cy="52" r="4.5" fill="#E0F2FE" filter="drop-shadow(0 0 6px #38BDF8)"/>
+                  <rect x="36" y="93" width="19" height="6.5" rx="1" fill="#FFFFFF" stroke="#000" stroke-width="0.5"/>
+                  <rect x="36" y="93" width="3.5" height="6.5" fill="#1D4ED8"/>
+                  <text x="40.5" y="98" font-family="'JetBrains Mono', monospace" font-size="3.6" font-weight="bold" fill="#000">KA37</text>
+                </svg>
+
+                <!-- Bounding Box Overlay -->
+                <div class="ai-bounding-box" id="aiBoundingBox">
+                  <span class="box-corner tl"></span>
+                  <span class="box-corner tr"></span>
+                  <span class="box-corner bl"></span>
+                  <span class="box-corner br"></span>
+
+                  <!-- Dynamic Telemetry Tag -->
+                  <div class="ai-target-tag" id="aiTargetTag">
+                    <div class="tag-line-top">
+                      <span id="actorTrackPlateText">[Track #01 | Plate: KA-74-A-0929 | Dwell: 00:00s]</span>
+                    </div>
+                    <div class="tag-line-bottom">
+                      <span id="actorVehicleTypeText">CAR / SEDAN</span>
+                      <span id="actorStatusText" style="color: var(--champagne-gold);">TRACKING IN ROI</span>
+                    </div>
+                  </div>
+
+                  <div class="optical-scan-beam" id="opticalScanBeam"></div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Control Strip -->
+            <div class="roadway-hud-controls">
+              <div class="hud-btn-group">
+                <button class="btn-hud-control" id="btnPauseSim"><i class="fa-solid fa-pause me-1"></i>PAUSE</button>
+                <button class="btn-hud-control" id="btnSwitchVehicle"><i class="fa-solid fa-rotate me-1"></i>SWITCH VEHICLE</button>
+                <button class="btn-hud-control" id="btnTriggerViolation"><i class="fa-solid fa-bolt me-1"></i>TRIGGER 30s VIOLATION</button>
+              </div>
+              <div style="font-family: var(--font-mono); font-size: 0.68rem; color: var(--champagne-gold);">
+                <i class="fa-solid fa-camera me-1"></i>CAM-01 CURBSIDE ANPR
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         5. THE FOUR PILLARS SECTION (ACTUAL IMPLEMENTATION ONLY)
+         ====================================================================== -->
+    <section class="pillars-section" id="technology">
+      <div class="section-head-luxury">
+        <div class="section-pretitle">PRECISION SYSTEM ARCHITECTURE</div>
+        <h2 class="section-headline">The Four Pillars of PARK-ALERT Engineering</h2>
+        <p class="section-description">
+          Engineered strictly reflecting our verified production implementation. Every module represents an active, verified operational component of our traffic enforcement pipeline.
+        </p>
+      </div>
+
+      <div class="pillars-grid">
+        
+        <!-- Pillar 01 -->
+        <div class="pillar-card">
+          <div>
+            <div class="pillar-number">PILLAR // 01</div>
+            <div class="pillar-icon-box">
+              <i class="fa-solid fa-draw-polygon"></i>
+            </div>
+            <h3 class="pillar-title">Spatial ROI Geofencing</h3>
+            <p class="pillar-desc">
+              Real-time polygon zone definition using sub-pixel ray-casting and coordinate tracking to monitor dwell time.
+            </p>
+          </div>
+          <div class="pillar-badge-footer">
+            <i class="fa-solid fa-microchip text-gold"></i> Sub-Pixel Coordinate Tracking
+          </div>
+        </div>
+
+        <!-- Pillar 02 -->
+        <div class="pillar-card">
+          <div>
+            <div class="pillar-number">PILLAR // 02</div>
+            <div class="pillar-icon-box">
+              <i class="fa-solid fa-id-card"></i>
+            </div>
+            <h3 class="pillar-title">ANPR via EasyOCR</h3>
+            <p class="pillar-desc">
+              Automated license plate localization and optical character recognition utilizing glyph-confusion heuristics for Indian vehicle plates.
+            </p>
+          </div>
+          <div class="pillar-badge-footer">
+            <i class="fa-solid fa-bolt text-gold"></i> Sub-Second Plate Extraction
+          </div>
+        </div>
+
+        <!-- Pillar 03 -->
+        <div class="pillar-card">
+          <div>
+            <div class="pillar-number">PILLAR // 03</div>
+            <div class="pillar-icon-box">
+              <i class="fa-solid fa-envelope-circle-check"></i>
+            </div>
+            <h3 class="pillar-title">Tiered Email Enforcement</h3>
+            <p class="pillar-desc">
+              Automated warning email sent at 20 seconds of continuous dwell, escalating to statutory penalty notice compounding at 30 seconds via secure Gmail SMTP (SSL Port 465). No SMS dependency.
+            </p>
+          </div>
+          <div class="pillar-badge-footer">
+            <i class="fa-solid fa-shield text-gold"></i> Secure Gmail SSL 465 Notice
+          </div>
+        </div>
+
+        <!-- Pillar 04 -->
+        <div class="pillar-card">
+          <div>
+            <div class="pillar-number">PILLAR // 04</div>
+            <div class="pillar-icon-box">
+              <i class="fa-solid fa-file-invoice-dollar"></i>
+            </div>
+            <h3 class="pillar-title">e-Challan &amp; Instant Settlement</h3>
+            <p class="pillar-desc">
+              Generation of digital Karnataka State Police (KSP) format e-Challans under MVA Sec 122/177, integrated with an online checkout simulation and instant receipt dispatch upon settlement.
+            </p>
+          </div>
+          <div class="pillar-badge-footer">
+            <i class="fa-solid fa-receipt text-gold"></i> KSP Statutory e-Challan
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         6. ABOUT US SECTION (AUTHORITATIVE NARRATIVE)
+         ====================================================================== -->
+    <section class="about-section" id="about-us">
+      <div class="about-editorial-container">
+        <div class="about-editorial-grid">
+          <div>
+            <div class="section-pretitle">PROJECT BACKGROUND &amp; ENGINEERING GOALS</div>
+            <h2 class="about-title">
+              About PARK-ALERT:
+              <span class="about-subtitle-gold">Engineering Modern Roadway Compliance</span>
+            </h2>
+          </div>
+          <div class="about-body-text">
+            <p>
+              Urban curbside management in metropolitan corridors has reached critical friction points. PARK-ALERT introduces an end-to-end edge-assisted computer vision pipeline specifically calibrated for Indian traffic environments, guaranteeing zero-touch statutory enforcement under Section 122 and 177 of the Motor Vehicles Act 1988/2019.
+            </p>
+          </div>
+        </div>
+
+        <div class="about-cards-row" style="grid-template-columns: repeat(2, 1fr); margin-top: 2rem;">
+          
+          <!-- Narrative Item 1: The Problem -->
+          <div class="about-mini-card">
+            <div class="mini-card-icon"><i class="fa-solid fa-triangle-exclamation text-crimson"></i></div>
+            <h4 class="mini-card-title">The Problem</h4>
+            <p class="mini-card-text">
+              Urban congestion, illegal curbside parking, and blocked emergency lanes cause severe traffic delays. Manual traffic police ticketing is slow, labor-intensive, and prone to disputes.
+            </p>
+          </div>
+
+          <!-- Narrative Item 2: Our Solution -->
+          <div class="about-mini-card">
+            <div class="mini-card-icon"><i class="fa-solid fa-microchip text-gold"></i></div>
+            <h4 class="mini-card-title">Our Solution</h4>
+            <p class="mini-card-text">
+              PARK-ALERT introduces an end-to-end edge-assisted computer vision pipeline. Using YOLOv8 and ByteTrack, the system automatically tracks vehicle presence within customized no-parking polygons.
+            </p>
+          </div>
+
+          <!-- Narrative Item 3: Dual-Tier Escalation -->
+          <div class="about-mini-card">
+            <div class="mini-card-icon"><i class="fa-solid fa-bell-concierge text-amber"></i></div>
+            <h4 class="mini-card-title">Dual-Tier Escalation</h4>
+            <p class="mini-card-text">
+              Rather than immediately penalizing drivers, the system grants a grace period, issuing a polite warning email at 20 seconds before escalating to a legal penalty at 30 seconds.
+            </p>
+          </div>
+
+          <!-- Narrative Item 4: Transparency & Closure -->
+          <div class="about-mini-card">
+            <div class="mini-card-icon"><i class="fa-solid fa-stamp text-emerald"></i></div>
+            <h4 class="mini-card-title">Transparency &amp; Closure</h4>
+            <p class="mini-card-text">
+              Extracted plates via EasyOCR are linked with contact records to generate tamper-proof digital e-Challans, providing an automated settlement workflow with persistent history.
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         FOOTER
+         ====================================================================== -->
+    <footer class="sothebys-footer">
+      <div class="footer-container">
+        <div class="footer-grid-4col">
+          
+          <div>
+            <div class="sothebys-brand" style="margin-bottom: 0.75rem;">
+              <div class="brand-emblem" style="width: 32px; height: 32px; font-size: 0.95rem;">
+                <i class="fa-solid fa-shield-halved"></i>
+              </div>
+              <span class="brand-wordmark" style="font-size: 1.25rem;">PARK-ALERT</span>
+            </div>
+            <p class="footer-brand-bio">
+              Pre-eminent AI traffic enforcement infrastructure uniting sub-second ANPR extraction, spatial polygon geofencing, and automated email notice delivery.
+            </p>
+          </div>
+
+          <div>
+            <h4 class="footer-col-title">Navigation</h4>
+            <ul class="footer-links-list">
+              <li><a href="#overview" class="footer-link-item"><i class="fa-solid fa-angle-right"></i> Overview</a></li>
+              <li><a href="#about-us" class="footer-link-item"><i class="fa-solid fa-angle-right"></i> About Us</a></li>
+              <li><a href="javascript:void(0)" onclick="openSignInModal()" class="footer-link-item"><i class="fa-solid fa-angle-right"></i> Officer Login</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 class="footer-col-title">Enforcement</h4>
+            <ul class="footer-links-list">
+              <li><a href="/unpaid" class="footer-link-item"><i class="fa-solid fa-clock-rotate-left"></i> Unpaid Registry</a></li>
+              <li><a href="/paid" class="footer-link-item"><i class="fa-solid fa-circle-check"></i> Paid Challans</a></li>
+              <li><a href="javascript:void(0)" onclick="openVehicleModal()" class="footer-link-item"><i class="fa-solid fa-id-card"></i> Vehicle Mapping</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 class="footer-col-title">Statutory Compliance</h4>
+            <ul class="footer-links-list">
+              <li><span class="footer-link-item"><i class="fa-solid fa-scale-balanced"></i> MVA 1988 &bull; Section 122</span></li>
+              <li><span class="footer-link-item"><i class="fa-solid fa-gavel"></i> MVA 2019 &bull; Section 177 / 177A</span></li>
+              <li><span class="footer-link-item"><i class="fa-solid fa-envelope"></i> SMTP SSL 465 Verified Notice</span></li>
+            </ul>
+          </div>
+
+        </div>
+
+        <div class="footer-bottom-bar">
+          <div>
+            &copy; 2026 PARK-ALERT Inc. Engineered for Karnataka State Smart Municipalities.
+          </div>
+          <div style="display: flex; gap: 1.5rem;">
+            <span>ANPR Vision Pipeline</span>
+            <span>Zero-Touch Compounding</span>
+            <span>KSP Standard Format</span>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ======================================================================
+       3. MODALS (SIGN IN, SIGN UP, REGISTER VEHICLE)
+       ====================================================================== -->
+
+  <!-- SIGN IN MODAL -->
+  <div class="sothebys-modal-backdrop" id="signInModalBackdrop">
+    <div class="sothebys-modal-box">
+      <div class="sothebys-modal-header">
+        <div>
+          <span class="tracking-luxury text-gold" style="font-size: 0.68rem; font-weight: 700;">OFFICER AUTHENTICATION</span>
+          <h3 class="sothebys-modal-title">Authorized Officer Login</h3>
+        </div>
+        <button type="button" class="sothebys-modal-close" onclick="closeSignInModal()">&times;</button>
+      </div>
+
+      <div class="sothebys-modal-body">
+        <form id="signInForm" onsubmit="handleSignInSubmit(event)">
+          <div class="sothebys-field-group">
+            <label class="sothebys-field-label">Officer Passcode / PIN *</label>
+            <input type="password" id="signInPin" class="sothebys-field-input" placeholder="Enter 4-6 digit officer passcode" required>
+          </div>
+
+          <div class="sothebys-field-group">
+            <label class="sothebys-field-label">Enforcement Area *</label>
+            <select id="signInArea" class="sothebys-field-select" required>
+              <option value="Bagalkot Central">Bagalkot Central</option>
+              <option value="Station Road Sector">Station Road Sector</option>
+              <option value="MG Road Sector">MG Road Sector</option>
+              <option value="Vidyagiri Corridor">Vidyagiri Corridor</option>
+              <option value="Navanagar Sector 02">Navanagar Sector 02</option>
+            </select>
+          </div>
+
+          <button type="submit" class="btn-sothebys-gold" style="width: 100%; margin-top: 1rem; padding: 0.9rem; justify-content: center;">
+            <i class="fa-solid fa-satellite-dish me-2"></i>Authenticate &amp; Launch Terminal
+          </button>
+        </form>
+
+        <div style="margin-top: 1.25rem; text-align: center; font-size: 0.8rem; color: var(--text-secondary);">
+          Need to register a department profile?
+          <a href="javascript:void(0)" onclick="closeSignInModal(); openSignUpModal();" style="color: var(--champagne-gold); text-decoration: none; font-weight: 600;">
+            Sign Up Here
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SIGN UP MODAL -->
+  <div class="sothebys-modal-backdrop" id="signUpModalBackdrop">
+    <div class="sothebys-modal-box">
+      <div class="sothebys-modal-header">
+        <div>
+          <span class="tracking-luxury text-gold" style="font-size: 0.68rem; font-weight: 700;">AGENCY REGISTRATION</span>
+          <h3 class="sothebys-modal-title">Traffic Department / Operator Registration</h3>
+        </div>
+        <button type="button" class="sothebys-modal-close" onclick="closeSignUpModal()">&times;</button>
+      </div>
+
+      <div class="sothebys-modal-body">
+        <form id="signUpForm" onsubmit="handleSignUpSubmit(event)">
+          <div class="sothebys-field-group">
+            <label class="sothebys-field-label">Officer Name *</label>
+            <input type="text" id="signUpName" class="sothebys-field-input" placeholder="e.g. Inspector R. Patil" required>
+          </div>
+
+          <div class="sothebys-field-group">
+            <label class="sothebys-field-label">Officer Passcode / PIN *</label>
+            <input type="password" id="signUpPin" class="sothebys-field-input" placeholder="Create 4-6 digit passcode" required>
+          </div>
+
+          <div class="sothebys-field-group">
+            <label class="sothebys-field-label">Jurisdiction / Enforcement Area *</label>
+            <input type="text" id="signUpArea" class="sothebys-field-input" placeholder="e.g. Bagalkot Central, Station Road" value="Bagalkot Central" required>
+          </div>
+
+          <div class="sothebys-field-group">
+            <label class="sothebys-field-label">Department Email *</label>
+            <input type="email" id="signUpEmail" class="sothebys-field-input" placeholder="officer@traffic.ksp.gov.in" required>
+          </div>
+
+          <button type="submit" class="btn-sothebys-gold" style="width: 100%; margin-top: 1rem; padding: 0.9rem; justify-content: center;">
+            <i class="fa-solid fa-user-check me-2"></i>Register &amp; Access Terminal
+          </button>
+        </form>
+
+        <div style="margin-top: 1.25rem; text-align: center; font-size: 0.8rem; color: var(--text-secondary);">
+          Already have an officer account?
+          <a href="javascript:void(0)" onclick="closeSignUpModal(); openSignInModal();" style="color: var(--champagne-gold); text-decoration: none; font-weight: 600;">
+            Sign In Here
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REGISTER VEHICLE RECORD MODAL -->
+  <div class="sothebys-modal-backdrop" id="vehicleModalBackdrop">
+    <div class="sothebys-modal-box modal-wide">
+      <div class="sothebys-modal-header">
+        <div>
+          <span class="tracking-luxury text-gold" style="font-size: 0.68rem; font-weight: 700;">CENTRAL DATABASE REGISTRY</span>
+          <h3 class="sothebys-modal-title">Manual Vehicle Registration &amp; Registry Review</h3>
+        </div>
+        <button type="button" class="sothebys-modal-close" onclick="closeVehicleModal()">&times;</button>
+      </div>
+
+      <div class="sothebys-modal-body">
+        <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 1.5rem;">
+          Map an Indian registration plate number directly to its Owner Name, Contact Email, and Phone Number in <code>database/no_parking.db</code>. When EasyOCR detects this vehicle, warning emails and e-Challans are automatically dispatched to this address.
+        </p>
+
+        <!-- Status Notice -->
+        <div id="vehicleModalAlert" style="display: none; padding: 0.75rem 1rem; border-radius: 4px; margin-bottom: 1.25rem; font-size: 0.85rem;"></div>
+
+        <!-- Registration Form -->
+        <form id="vehicleRegForm" onsubmit="handleVehicleRegSubmit(event)" style="background: rgba(4, 14, 28, 0.6); padding: 1.25rem; border: 1px solid var(--sothebys-border); border-radius: 6px; margin-bottom: 1.75rem;">
+          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+            <div class="sothebys-field-group" style="margin-bottom: 0;">
+              <label class="sothebys-field-label">License Plate Number *</label>
+              <input type="text" id="regPlate" class="sothebys-field-input" placeholder="e.g. KA 74 A 0929 or KA28W5310" required>
+            </div>
+            <div class="sothebys-field-group" style="margin-bottom: 0;">
+              <label class="sothebys-field-label">Registered Owner Full Name *</label>
+              <input type="text" id="regOwner" class="sothebys-field-input" placeholder="e.g. Anil Patel" required>
+            </div>
+            <div class="sothebys-field-group" style="margin-bottom: 0;">
+              <label class="sothebys-field-label">Contact Email (Notice Recipient) *</label>
+              <input type="email" id="regEmail" class="sothebys-field-input" placeholder="owner@example.com" required>
+            </div>
+            <div class="sothebys-field-group" style="margin-bottom: 0;">
+              <label class="sothebys-field-label">Contact Phone Number (Optional)</label>
+              <input type="tel" id="regPhone" class="sothebys-field-input" placeholder="+91 98765 43210">
+            </div>
+          </div>
+
+          <button type="submit" id="btnSaveVehicle" class="btn-sothebys-gold" style="margin-top: 1rem; width: 100%; justify-content: center;">
+            <i class="fa-solid fa-floppy-disk me-2"></i>Save Vehicle Record to Database
+          </button>
+        </form>
+
+        <!-- Registered Vehicles Search & Table -->
+        <div>
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+            <h4 style="font-family: var(--font-serif); font-size: 1.05rem; color: #FFF;">Registered Vehicles in Database</h4>
+            <input type="search" id="vehicleFilterInput" placeholder="Filter plate or owner..." oninput="filterVehiclesList()" class="sothebys-search-input" style="width: 220px; padding: 0.4rem 0.8rem; font-size: 0.78rem;">
+          </div>
+
+          <div style="max-height: 220px; overflow-y: auto; border: 1px solid var(--sothebys-border); border-radius: 4px;">
+            <table class="sothebys-table" style="font-size: 0.78rem;">
+              <thead>
+                <tr>
+                  <th style="padding: 0.6rem 0.8rem;">Plate</th>
+                  <th style="padding: 0.6rem 0.8rem;">Owner Name</th>
+                  <th style="padding: 0.6rem 0.8rem;">Email Address</th>
+                  <th style="padding: 0.6rem 0.8rem;">Phone</th>
+                </tr>
+              </thead>
+              <tbody id="registeredVehiclesBody">
+                <tr>
+                  <td colspan="4" class="table-empty-message" style="padding: 1.5rem;">
+                    <i class="fa-solid fa-circle-notch fa-spin text-gold me-2"></i>Querying registered vehicles...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       PAGE JAVASCRIPT: AUTHENTICATION, SIMULATION, TABLE & MODAL LOGIC
+       ====================================================================== -->
+  <script>
+    /* ----------------------------------------------------------------------
+       1. Authentication & Session State Management
+       ---------------------------------------------------------------------- */
+    const AUTH_KEY = 'parkAlertAuth_v2';
+
+    function getAuth() {
+      try {
+        const raw = localStorage.getItem(AUTH_KEY);
+        return raw ? JSON.parse(raw) : null;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function setAuth(data) {
+      localStorage.setItem(AUTH_KEY, JSON.stringify(data));
+      applyAuthState();
+    }
+
+    function logoutOperator() {
+      localStorage.removeItem(AUTH_KEY);
+      applyAuthState();
+    }
+
+    function applyAuthState() {
+      const auth = getAuth();
+      const authTopBar = document.getElementById('authenticatedTopBar');
+      const authDashboard = document.getElementById('authenticatedDashboardView');
+      const publicLanding = document.getElementById('publicLandingView');
+      const publicNavHeader = document.getElementById('publicNavHeader');
+
+      if (auth && auth.isLoggedIn) {
+        // Authenticated State
+        if (authTopBar) authTopBar.style.display = 'block';
+        if (authDashboard) authDashboard.style.display = 'flex';
+        if (publicLanding) publicLanding.style.display = 'none';
+        if (publicNavHeader) publicNavHeader.style.display = 'none';
+
+        const officerDisplay = auth.officerName || 'Inspector Patil';
+        const areaDisplay = auth.officerArea || 'Bagalkot Central';
+
+        const topOff = document.getElementById('topBarOfficerDisplay');
+        const topArea = document.getElementById('topBarAreaDisplay');
+        const sideOff = document.getElementById('sidebarOfficerName');
+        const sideArea = document.getElementById('sidebarOfficerArea');
+
+        if (topOff) topOff.innerText = officerDisplay;
+        if (topArea) topArea.innerText = areaDisplay;
+        if (sideOff) sideOff.innerText = officerDisplay;
+        if (sideArea) sideArea.innerText = areaDisplay;
+
+        fetchViolationsData();
+      } else {
+        // Public Mode State
+        if (authTopBar) authTopBar.style.display = 'none';
+        if (authDashboard) authDashboard.style.display = 'none';
+        if (publicLanding) publicLanding.style.display = 'block';
+        if (publicNavHeader) publicNavHeader.style.display = 'block';
+      }
+    }
+
+    function togglePublicLandingView() {
+      const publicLanding = document.getElementById('publicLandingView');
+      const authDashboard = document.getElementById('authenticatedDashboardView');
+      if (publicLanding && authDashboard) {
+        const isLandingVisible = publicLanding.style.display === 'block';
+        publicLanding.style.display = isLandingVisible ? 'none' : 'block';
+        authDashboard.style.display = isLandingVisible ? 'flex' : 'none';
+      }
+    }
+
+    function scrollToSurveillanceHUD() {
+      const authDashboard = document.getElementById('authenticatedDashboardView');
+      const publicLanding = document.getElementById('publicLandingView');
+      if (authDashboard) authDashboard.style.display = 'flex';
+      if (publicLanding) publicLanding.style.display = 'none';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    /* ----------------------------------------------------------------------
+       2. Modal Controllers
+       ---------------------------------------------------------------------- */
+    function openSignInModal() {
+      document.getElementById('signInModalBackdrop').classList.add('open');
+    }
+    function closeSignInModal() {
+      document.getElementById('signInModalBackdrop').classList.remove('open');
+    }
+
+    function openSignUpModal() {
+      document.getElementById('signUpModalBackdrop').classList.add('open');
+    }
+    function closeSignUpModal() {
+      document.getElementById('signUpModalBackdrop').classList.remove('open');
+    }
+
+    function openVehicleModal() {
+      document.getElementById('vehicleModalBackdrop').classList.add('open');
+      loadRegisteredVehicles();
+    }
+    function closeVehicleModal() {
+      document.getElementById('vehicleModalBackdrop').classList.remove('open');
+    }
+
+    // Close on backdrop click
+    window.addEventListener('click', (e) => {
+      if (e.target.classList.contains('sothebys-modal-backdrop')) {
+        e.target.classList.remove('open');
+      }
+    });
+
+    function handleSignInSubmit(e) {
+      e.preventDefault();
+      const pin = document.getElementById('signInPin').value;
+      const area = document.getElementById('signInArea').value;
+      setAuth({
+        isLoggedIn: true,
+        officerName: 'Inspector Patil',
+        officerPin: pin,
+        officerArea: area
+      });
+      closeSignInModal();
+    }
+
+    function handleSignUpSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('signUpName').value;
+      const pin = document.getElementById('signUpPin').value;
+      const area = document.getElementById('signUpArea').value;
+      const email = document.getElementById('signUpEmail').value;
+      setAuth({
+        isLoggedIn: true,
+        officerName: name,
+        officerPin: pin,
+        officerArea: area,
+        officerEmail: email
+      });
+      closeSignUpModal();
+    }
+
+    /* ----------------------------------------------------------------------
+       3. Manual Vehicle Registration Controller
+       ---------------------------------------------------------------------- */
+    let cachedVehicles = [];
+
+    async function loadRegisteredVehicles() {
+      const tbody = document.getElementById('registeredVehiclesBody');
+      if (!tbody) return;
+
+      try {
+        const res = await fetch('/api/vehicles');
+        if (res.ok) {
+          const data = await res.json();
+          cachedVehicles = data.vehicles || [];
+          renderVehiclesList(cachedVehicles);
+        } else {
+          tbody.innerHTML = '<tr><td colspan="4" class="table-empty-message">Could not load vehicles from database.</td></tr>';
+        }
+      } catch (err) {
+        tbody.innerHTML = '<tr><td colspan="4" class="table-empty-message">Database offline or unreachable.</td></tr>';
+      }
+    }
+
+    function renderVehiclesList(list) {
+      const tbody = document.getElementById('registeredVehiclesBody');
+      if (!tbody) return;
+
+      if (!list || list.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" class="table-empty-message" style="padding: 1.25rem;">No vehicles registered yet.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = list.map(v => `
+        <tr>
+          <td style="padding: 0.6rem 0.8rem;"><span class="sothebys-plate-badge" style="font-size: 0.78rem; padding: 2px 6px;">${v.plate_number}</span></td>
+          <td style="padding: 0.6rem 0.8rem; font-weight: 600;">${v.owner_name}</td>
+          <td style="padding: 0.6rem 0.8rem; color: var(--text-secondary);">${v.email}</td>
+          <td style="padding: 0.6rem 0.8rem; font-family: var(--font-mono); color: var(--champagne-gold);">${v.phone_number || '—'}</td>
+        </tr>
+      `).join('');
+    }
+
+    function filterVehiclesList() {
+      const query = (document.getElementById('vehicleFilterInput').value || '').trim().toUpperCase();
+      const filtered = cachedVehicles.filter(v => 
+        String(v.plate_number).toUpperCase().includes(query) || 
+        String(v.owner_name).toUpperCase().includes(query)
+      );
+      renderVehiclesList(filtered);
+    }
+
+    async function handleVehicleRegSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnSaveVehicle');
+      const alertBox = document.getElementById('vehicleModalAlert');
+
+      const plate = document.getElementById('regPlate').value;
+      const owner = document.getElementById('regOwner').value;
+      const email = document.getElementById('regEmail').value;
+      const phone = document.getElementById('regPhone').value;
+
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin me-2"></i>Saving to database...';
+
+      try {
+        const res = await fetch('/api/register_vehicle', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ plate_number: plate, owner_name: owner, email: email, phone_number: phone })
+        });
+        const data = await res.json();
+
+        alertBox.style.display = 'block';
+        if (res.ok && data.status === 'success') {
+          alertBox.style.background = 'rgba(16, 185, 129, 0.15)';
+          alertBox.style.border = '1px solid #10B981';
+          alertBox.style.color = '#34D399';
+          alertBox.innerText = data.message;
+          document.getElementById('vehicleRegForm').reset();
+          loadRegisteredVehicles();
+        } else {
+          alertBox.style.background = 'rgba(239, 68, 68, 0.15)';
+          alertBox.style.border = '1px solid #EF4444';
+          alertBox.style.color = '#F87171';
+          alertBox.innerText = data.message || 'Error registering vehicle.';
+        }
+      } catch (err) {
+        alertBox.style.display = 'block';
+        alertBox.style.background = 'rgba(239, 68, 68, 0.15)';
+        alertBox.style.border = '1px solid #EF4444';
+        alertBox.style.color = '#F87171';
+        alertBox.innerText = 'Failed to connect to database.';
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-floppy-disk me-2"></i>Save Vehicle Record to Database';
+      }
+    }
+
+    /* ----------------------------------------------------------------------
+       4. Looping Vehicle Roadway Animation (Car, Bike, Scooty)
+       ---------------------------------------------------------------------- */
+    const VEHICLES = [
+      { id: 'car', type: 'CAR / SEDAN', trackId: '#01', plate: 'KA-74-A-0929', svgId: 'actorCarSvg', dwellTarget: 34 },
+      { id: 'bike', type: 'MOTORCYCLE / BIKE', trackId: '#02', plate: 'KA-04-HX-4592', svgId: 'actorBikeSvg', dwellTarget: 34 },
+      { id: 'scooty', type: 'SCOOTER / SCOOTY', trackId: '#03', plate: 'KA-37-EC-2109', svgId: 'actorScootySvg', dwellTarget: 34 }
+    ];
+
+    let currentVehicleIdx = 0;
+    let isPaused = false;
+    let dwellTimerSec = 0;
+    let dwellInterval = null;
+    let cycleTimeout = null;
+
+    const carrier = document.getElementById('vehicleCarrier');
+    const bbox = document.getElementById('aiBoundingBox');
+    const roiBoundary = document.getElementById('roiBoundary');
+    const roiLabelChip = document.getElementById('roiLabelChip');
+    const tagText = document.getElementById('actorTrackPlateText');
+    const typeText = document.getElementById('actorVehicleTypeText');
+    const statusText = document.getElementById('actorStatusText');
+    const scanBeam = document.getElementById('opticalScanBeam');
+    const btnPause = document.getElementById('btnPauseSim');
+    const btnSwitch = document.getElementById('btnSwitchVehicle');
+    const btnTrigger = document.getElementById('btnTriggerViolation');
+
+    function showVehicleArtwork(idx) {
+      VEHICLES.forEach((v, i) => {
+        const el = document.getElementById(v.svgId);
+        if (el) el.style.display = (i === idx) ? 'block' : 'none';
+      });
+      const current = VEHICLES[idx];
+      if (typeText) typeText.innerText = current.type;
+    }
+
+    function formatDwell(sec) {
+      const mm = String(Math.floor(sec / 60)).padStart(2, '0');
+      const ss = String(sec % 60).padStart(2, '0');
+      return `${mm}:${ss}s`;
+    }
+
+    function resetSimulationVisuals() {
+      if (bbox) {
+        bbox.className = 'ai-bounding-box';
+        bbox.style.opacity = '0';
+      }
+      if (roiBoundary) roiBoundary.classList.remove('alert-crimson');
+      if (roiLabelChip) {
+        roiLabelChip.innerHTML = '<i class="fa-solid fa-triangle-exclamation me-1"></i>RESTRICTED NO-PARKING ZONE &bull; SEC 122 MVA';
+      }
+      if (scanBeam) scanBeam.classList.remove('scanning');
+      if (statusText) {
+        statusText.innerText = 'APPROACHING RESTRICTED ZONE';
+        statusText.style.color = 'var(--champagne-gold)';
+      }
+    }
+
+    function startVehicleCycle() {
+      clearTimeout(cycleTimeout);
+      clearInterval(dwellInterval);
+
+      dwellTimerSec = 0;
+      resetSimulationVisuals();
+      showVehicleArtwork(currentVehicleIdx);
+
+      const v = VEHICLES[currentVehicleIdx];
+      if (tagText) {
+        tagText.innerText = `[Track ${v.trackId} | Plate: ${v.plate} | Dwell: 00:00s]`;
+      }
+
+      if (carrier) {
+        carrier.style.transition = 'none';
+        carrier.style.transform = 'translate3d(450px, 0, 0)';
+        carrier.style.opacity = '1';
+
+        cycleTimeout = setTimeout(() => {
+          if (isPaused) return;
+          carrier.style.transition = 'transform 2.2s cubic-bezier(0.22, 1, 0.36, 1)';
+          carrier.style.transform = 'translate3d(0px, 0, 0)';
+
+          cycleTimeout = setTimeout(() => {
+            if (isPaused) return;
+            lockBoundingBox();
+          }, 2200);
+        }, 50);
+      }
+    }
+
+    function lockBoundingBox() {
+      const v = VEHICLES[currentVehicleIdx];
+      if (bbox) {
+        bbox.style.opacity = '1';
+        bbox.className = 'ai-bounding-box';
+      }
+      if (scanBeam) scanBeam.classList.add('scanning');
+      if (statusText) {
+        statusText.innerText = 'TRACKING IN ROI ZONE';
+        statusText.style.color = '#38BDF8';
+      }
+
+      dwellInterval = setInterval(() => {
+        if (isPaused) return;
+        dwellTimerSec++;
+
+        if (tagText) {
+          tagText.innerText = `[Track ${v.trackId} | Plate: ${v.plate} | Dwell: ${formatDwell(dwellTimerSec)}]`;
+        }
+
+        if (dwellTimerSec >= 20 && dwellTimerSec < 30) {
+          if (bbox) bbox.className = 'ai-bounding-box warning-state';
+          if (statusText) {
+            statusText.innerText = '20s THRESHOLD: WARNING EMAIL DISPATCHED';
+            statusText.style.color = 'var(--amber)';
+          }
+        }
+
+        if (dwellTimerSec >= 30) {
+          triggerViolationState();
+        }
+
+        if (dwellTimerSec >= v.dwellTarget) {
+          clearInterval(dwellInterval);
+          departVehicle();
+        }
+      }, 350);
+    }
+
+    function triggerViolationState() {
+      if (bbox) bbox.className = 'ai-bounding-box crimson-state';
+      if (roiBoundary) roiBoundary.classList.add('alert-crimson');
+      if (roiLabelChip) {
+        roiLabelChip.innerHTML = '<i class="fa-solid fa-circle-exclamation me-1"></i>30s VIOLATION DETECTED &bull; STATUTORY NOTICE DISPATCHED';
+      }
+      if (statusText) {
+        statusText.innerText = '30s VIOLATION CONFIRMED: E-CHALLAN ISSUED';
+        statusText.style.color = 'var(--crimson)';
+      }
+    }
+
+    function departVehicle() {
+      if (bbox) bbox.style.opacity = '0';
+      if (scanBeam) scanBeam.classList.remove('scanning');
+
+      if (carrier) {
+        carrier.style.transition = 'transform 2s cubic-bezier(0.55, 0, 1, 0.45), opacity 1.5s ease';
+        carrier.style.transform = 'translate3d(-450px, 0, 0)';
+        carrier.style.opacity = '0';
+      }
+
+      cycleTimeout = setTimeout(() => {
+        currentVehicleIdx = (currentVehicleIdx + 1) % VEHICLES.length;
+        startVehicleCycle();
+      }, 2200);
+    }
+
+    if (btnPause) {
+      btnPause.addEventListener('click', () => {
+        isPaused = !isPaused;
+        btnPause.innerHTML = isPaused ? '<i class="fa-solid fa-play me-1"></i>RESUME' : '<i class="fa-solid fa-pause me-1"></i>PAUSE';
+      });
+    }
+
+    if (btnSwitch) {
+      btnSwitch.addEventListener('click', () => {
+        currentVehicleIdx = (currentVehicleIdx + 1) % VEHICLES.length;
+        startVehicleCycle();
+      });
+    }
+
+    if (btnTrigger) {
+      btnTrigger.addEventListener('click', () => {
+        dwellTimerSec = 30;
+        const v = VEHICLES[currentVehicleIdx];
+        if (tagText) tagText.innerText = `[Track ${v.trackId} | Plate: ${v.plate} | Dwell: ${formatDwell(30)}]`;
+        triggerViolationState();
+      });
+    }
+
+    startVehicleCycle();
+
+    /* ----------------------------------------------------------------------
+       5. Violations Table Fetcher (/violations_data)
+       ---------------------------------------------------------------------- */
+    function escapeHtml(str) {
+      return String(str ?? '')
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
+    function handleStreamOffline(img) {
+      img.style.display = 'none';
+      const fallback = document.getElementById('dashboardNoFeedMsg');
+      if (fallback) fallback.style.display = 'flex';
+      const badge = document.getElementById('dashboardStreamStatus');
+      if (badge) {
+        badge.innerText = 'STREAM STANDBY';
+        badge.parentElement.classList.remove('status-pill-live');
+        badge.parentElement.classList.add('status-pill-warning');
+      }
+    }
+
+    function fetchViolationsData() {
+      fetch('/violations_data')
+        .then(res => res.json())
+        .then(data => {
+          const tbody = document.getElementById('dashboardViolationsTableBody');
+          if (!tbody) return;
+
+          const violations = Array.isArray(data) ? data : (data.violations || []);
+
+          if (violations.length === 0) {
+            tbody.innerHTML = `
+              <tr>
+                <td colspan="9" class="table-empty-message">
+                  <i class="fa-solid fa-circle-check text-emerald me-2"></i>No active no-parking violations detected in current surveillance session.
+                </td>
+              </tr>
+            `;
+            return;
+          }
+
+          let rowsHtml = '';
+          violations.forEach(v => {
+            const plate = escapeHtml(v.plate_number || v.license_plate || v.plate || 'UNKNOWN');
+            const trackId = escapeHtml(v.track_id || '-');
+            const vType = escapeHtml(v.vehicle_type || 'Motor Vehicle');
+            const duration = parseInt(v.duration_sec ?? v.duration ?? 0, 10);
+            const fine = parseFloat(v.fine_amount || 700).toFixed(2);
+            const status = (v.status === 'PAID') ? 'PAID' : 'UNPAID';
+            const violationId = v.violation_id ?? v.id;
+            const timestamp = escapeHtml(v.timestamp || '—');
+
+            const isEmailSent = (v.sms_status === 'sent' || v.sms_status === 'Sent');
+            const emailBadge = isEmailSent
+              ? '<span class="status-pill status-pill-paid"><i class="fa-solid fa-envelope-circle-check me-1"></i>Email Dispatched</span>'
+              : '<span class="status-pill status-pill-warning"><i class="fa-solid fa-clock me-1"></i>Pending</span>';
+
+            const statusBadge = (status === 'PAID')
+              ? '<span class="status-pill status-pill-paid"><i class="fa-solid fa-circle-check me-1"></i>PAID</span>'
+              : '<span class="status-pill status-pill-unpaid"><i class="fa-solid fa-circle-exclamation me-1"></i>UNPAID</span>';
+
+            const challanBtn = violationId
+              ? `<a href="/challan/${violationId}" target="_blank" class="btn-sm-action btn-challan-view">
+                   <i class="fa-solid fa-file-invoice me-1"></i>View Challan
+                 </a>`
+              : '—';
+
+            rowsHtml += `
+              <tr>
+                <td><strong style="color: var(--champagne-gold); font-family: var(--font-mono);">#${trackId}</strong></td>
+                <td><span class="sothebys-plate-badge"><span class="plate-country-code">IND</span>${plate}</span></td>
+                <td>${vType}</td>
+                <td><strong style="font-family: var(--font-mono);">${duration}s</strong></td>
+                <td><strong class="text-crimson" style="font-family: var(--font-mono);">₹${fine}</strong></td>
+                <td>${statusBadge}</td>
+                <td>${emailBadge}</td>
+                <td style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-secondary);">${timestamp}</td>
+                <td>${challanBtn}</td>
+              </tr>
+            `;
+          });
+
+          tbody.innerHTML = rowsHtml;
+        })
+        .catch(err => {
+          console.warn('Violations data fetch error:', err);
+        });
+    }
+
+    // Auto-refresh live violations table every 2 seconds
+    setInterval(fetchViolationsData, 2000);
+
+    // Initial check for authentication state on load
+    document.addEventListener('DOMContentLoaded', () => {
+      applyAuthState();
+    });
+  </script>
+</body>
+</html>
